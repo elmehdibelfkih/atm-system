@@ -6,8 +6,8 @@ int getAccountFromFile(FILE *ptr, char name[50], struct Record *r)
 {
     return fscanf(ptr, "%d %d %s %d %d/%d/%d %s %d %lf %s",
                   &r->id,
-		  &r->userId,
-		  name,
+                  &r->userId,
+                  name,
                   &r->accountNbr,
                   &r->deposit.month,
                   &r->deposit.day,
@@ -21,9 +21,9 @@ int getAccountFromFile(FILE *ptr, char name[50], struct Record *r)
 void saveAccountToFile(FILE *ptr, struct User u, struct Record r)
 {
     fprintf(ptr, "%d %d %s %d %d/%d/%d %s %d %.2lf %s\n\n",
-            &r->id,
-	    &u->id
-	    &u->name,
+            (&r)->id, // &r->id,
+            (&u)->id,
+            (&u)->name, // &u->id & u->name,^
             r.accountNbr,
             r.deposit.month,
             r.deposit.day,
@@ -96,12 +96,12 @@ invalid:
     }
 }
 
-void createNewAcc(struct User u)
+void createNewAcc(struct User u) // creat new account to an exist user
 {
-    struct Record r;
-    struct Record cr;
-    char userName[50];
-    FILE *pf = fopen(RECORDS, "a+");
+    struct Record r; // the entred data
+    struct Record cr; // tmp to store data from the record file
+    char userName[50]; // i don't need it
+    FILE *pf = fopen(RECORDS, "a+"); // open records file
 
 noAccount:
     system("clear");
@@ -111,9 +111,11 @@ noAccount:
     scanf("%d/%d/%d", &r.deposit.month, &r.deposit.day, &r.deposit.year);
     printf("\nEnter the account number:");
     scanf("%d", &r.accountNbr);
-
-    while (getAccountFromFile(pf, userName, &cr))
+    // FIXME: the loop does  not break
+    while (getAccountFromFile(pf, userName, &cr)) // the loop break if there is no more accounts in records file
     {
+        printf("%s\n", userName);
+        // exit(1);
         if (strcmp(userName, u.name) == 0 && cr.accountNbr == r.accountNbr)
         {
             printf("✖ This Account already exists for this user\n\n");
@@ -128,11 +130,10 @@ noAccount:
     scanf("%lf", &r.amount);
     printf("\nChoose the type of account:\n\t-> saving\n\t-> current\n\t-> fixed01(for 1 year)\n\t-> fixed02(for 2 years)\n\t-> fixed03(for 3 years)\n\n\tEnter your choice:");
     scanf("%s", r.accountType);
-
-    saveAccountToFile(pf, u, r);
-
-    fclose(pf);
-    success(u);
+    //TODO: checkAccData(struct User u)
+    saveAccountToFile(pf, u, r); // save the entred data to the records file 
+    fclose(pf); // close the FD to free resourcese
+    success(u); // success message
 }
 
 void checkAllAccounts(struct User u)

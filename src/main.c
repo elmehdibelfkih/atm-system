@@ -22,27 +22,22 @@ void mainMenu(struct User u)
         createNewAcc(u);
         break;
     case 2:
-        // student TODO : add your **Update account information** function
-        // here
+        //TODO: add your **Update account information** function
         break;
     case 3:
-        // student TODO : add your **Check the details of existing accounts** function
-        // here
+        //TODO: add your **Check the details of existing accounts** function
         break;
     case 4:
         checkAllAccounts(u);
         break;
     case 5:
-        // student TODO : add your **Make transaction** function
-        // here
+        //TODO: add your **Make transaction** function
         break;
     case 6:
-        // student TODO : add your **Remove existing account** function
-        // here
+        //TODO: add your **Remove existing account** function
         break;
     case 7:
-        // student TODO : add your **Transfer owner** function
-        // here
+        //TODO: add your **Transfer owner** function
         break;
     case 8:
         exit(1);
@@ -81,8 +76,7 @@ void initMenu(struct User *u)
             r = 1;
             break;
         case 2:
-            // student TODO : add your **Registration** function
-            // here
+            //TODO: add your **Registration** function
             r = 1;
             break;
         case 3:
@@ -97,7 +91,7 @@ void initMenu(struct User *u)
 int main()
 {
     struct User u;
-    
+
     initMenu(&u);
     mainMenu(u);
     return 0;

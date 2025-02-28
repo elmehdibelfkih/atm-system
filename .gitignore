@@ -1,0 +1,51 @@
+# Compiled object files and executables
+*.o
+*.out
+*.a
+*.so
+*.exe
+*.dll
+
+# Debug files
+*.dSYM/
+*.stackdump
+
+# Build directories
+/build/
+bin/
+obj/
+CMakeFiles/
+CMakeCache.txt
+
+# Dependency files
+*.d
+
+# Editor/IDE-specific files
+.vscode/
+.idea/
+*.swp
+*.swo
+*.bak
+
+# Logs and temporary files
+*.log
+*.tmp
+*.cache
+*.pid
+*.lock
+
+# Generated files
+*.gcda
+*.gcno
+*.gcov
+
+# Makefiles and auto-generated configure files
+Makefile.in
+config.h
+config.log
+config.status
+configure
+
+# Generated documentation
+docs/
+*.pdf
