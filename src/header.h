@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+#include <sqlite3.h>    
 struct Date
 {
     int month, day, year;
@@ -41,5 +41,14 @@ const char *getPassword(struct User u);
 void createNewAcc(struct User u);
 void mainMenu(struct User u);
 void checkAllAccounts(struct User u);
+
+// menus functions
+void mainMenu(struct User u);
+void initMenu(struct User *u);
+
+
+// data base functions
+void intiDataBase(sqlite3 **db);
+void addUser(char *name, char *passWord, sqlite3 *db);
 
 #endif
