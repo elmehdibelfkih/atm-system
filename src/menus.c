@@ -2,7 +2,6 @@
 
 void mainMenu(struct User u, sqlite3 *db)
 {
-    (void)db; // remove it
     int option;
     system("clear");
     printf("\n\n\t\t======= ATM =======\n\n");
@@ -23,22 +22,22 @@ void mainMenu(struct User u, sqlite3 *db)
         createNewAcc(u, db);
         break;
     case 2:
-        //TODO: add your **Update account information** function
+        // TODO: add your **Update account information** function
         break;
     case 3:
-        //TODO: add your **Check the details of existing accounts** function
+        // TODO: add your **Check the details of existing accounts** function
         break;
     case 4:
         checkAllAccounts(u, db);
         break;
     case 5:
-        //TODO: add your **Make transaction** function
+        // TODO: add your **Make transaction** function
         break;
     case 6:
-        //TODO: add your **Remove existing account** function
+        // TODO: add your **Remove existing account** function
         break;
     case 7:
-        //TODO: add your **Transfer owner** function
+        // TODO: add your **Transfer owner** function
         break;
     case 8:
         exit(1);
@@ -50,7 +49,6 @@ void mainMenu(struct User u, sqlite3 *db)
 
 void initMenu(struct User *u, sqlite3 *db)
 {
-    (void)db; // remove it
     int r = 0;
     int option;
     system("clear");
@@ -66,26 +64,23 @@ void initMenu(struct User *u, sqlite3 *db)
         {
         case 1:
             loginMenu(u->name, u->password);
-            if (strcmp(u->password, getPassword(*u)) == 0)
+            if (strcmp(u->password, getPassword(*u, db)) != 0)
             {
-                printf("\n\nPassword Match!");
-            }
-            else
-            {
-                printf("\nWrong password!! or User Name\n");
-                exit(1);
+                system("clear");
+                printf("\n\nWrong password!! or User Name\n");
+                break;
             }
             r = 1;
             break;
         case 2:
-            //TODO: add your **Registration** function
-            r = registration(db);
+            r = registration(db, u);
             break;
         case 3:
-            exit(1);
+            exit(0);
             break;
         default:
             printf("Insert a valid operation!\n");
+            break;
         }
     }
 };

@@ -8,7 +8,8 @@ void loginMenu(char a[50], char pass[50])
     struct termios oflags, nflags;
 
     system("clear");
-    printf("\n\n\n\t\t\t\t   Bank Management System\n\t\t\t\t\t User Login:");
+    printf("\n\n\n\t\t\t\t   Bank Management System\n");
+    printf("\n\t\t\t\t\t User Login: ");
     scanf("%s", a);
 
     // disabling echo
@@ -22,7 +23,7 @@ void loginMenu(char a[50], char pass[50])
         perror("tcsetattr");
         return exit(1);
     }
-    printf("\n\n\n\n\n\t\t\t\tEnter the password to login:");
+    printf("\n\t\t\t\t\t Enter the password to login: ");
     scanf("%s", pass);
 
     // restore terminal
@@ -33,40 +34,13 @@ void loginMenu(char a[50], char pass[50])
     }
 };
 
-const char *getPassword(struct User u)
-{
-    FILE *fp;
-    struct User userChecker;
-
-    if ((fp = fopen("./data/users.txt", "r")) == NULL)
-    {
-        printf("Error! opening file");
-        exit(1);
-    }
-
-    while (fscanf(fp, "%s %s", userChecker.name, userChecker.password) != EOF)
-    {
-        if (strcmp(userChecker.name, u.name) == 0)
-        {
-            fclose(fp);
-            char *buff = userChecker.password;
-            return buff;
-        }
-    }
-
-    fclose(fp);
-    return "no user found";
-}
-
-int registration(sqlite3 *db) {
-    char a[50];
-    char pass[50];
+int registration(sqlite3 *db, struct User *u) {
     struct termios oflags, nflags;
 
     system("clear");
     printf("\n\n\n\t\t\t\t   Bank Management System: registration\n");
-    printf("\n\t\t\t\t\t User Login:");
-    scanf("%s", a);
+    printf("\n\t\t\t\t\t User Login: ");
+    scanf("%s", u->name);
 
     // disabling echo
     tcgetattr(fileno(stdin), &oflags);
@@ -79,8 +53,8 @@ int registration(sqlite3 *db) {
         perror("tcsetattr");
         exit(1);
     }
-    printf("\n\t\t\t\t\t Enter the password:");
-    scanf("%s", pass);
+    printf("\n\t\t\t\t\t Enter the password: ");
+    scanf("%s", u->password);
 
     // restore terminal
     if (tcsetattr(fileno(stdin), TCSANOW, &oflags) != 0)
@@ -89,5 +63,5 @@ int registration(sqlite3 *db) {
         exit(1);
     }
     system("clear");
-    return addUser(a, pass, db);
+    return addUser(u->name, u->password, db);
 }

@@ -12,10 +12,10 @@ void intiDataBase(sqlite3 **db)
                     "user_id INTEGER NOT NULL, "
                     "name TEXT NOT NULL, "
                     "account_id INTEGER UNIQUE NOT NULL, "
-                    "date_of_creation TEXT NOT NULL, "
+                    "date_of_creation DATE NOT NULL, "
                     "country TEXT NOT NULL, "
-                    "phone TEXT NOT NULL, "
-                    "balance INTEGER NOT NULL, " // MUST BE FLOAT
+                    "phone NUMERIC NOT NULL, "
+                    "balance REAL NOT NULL, " // MUST BE FLOAT
                     "type_of_account TEXT NOT NULL);";
     int rc = sqlite3_open("./data/atm.db", db);
 
@@ -44,10 +44,6 @@ void intiDataBase(sqlite3 **db)
         sqlite3_close(*db);
         exit(1);
     }
-
-    // testing
-    addUser("mehdi", "belfkih", *db);
-
     return;
 }
 
@@ -72,4 +68,34 @@ int addUser(char *name, char *passWord, sqlite3 *db)
         return 0;
     }
     return 1;
+}
+
+void addRecord(struct Record r, sqlite3 *db)
+{
+    (void)r;
+    (void)db;
+}
+
+const char *getPassword(struct User u, sqlite3 *db)
+{
+    // struct User userChecker;
+    const unsigned char *password;
+    char *sql = "SELECT password FROM users WHERE name = ?";
+    sqlite3_stmt *stmt;
+
+    if (sqlite3_prepare_v2(db, sql, -1, &stmt, NULL) != SQLITE_OK)
+    {
+        exit(1); // FIXME: avoid using exit
+    }
+    sqlite3_bind_text(stmt, 1, u.name, -1, SQLITE_STATIC);
+    if (sqlite3_step(stmt) == SQLITE_ROW)
+    {
+        password = sqlite3_column_text(stmt, 0);
+    }
+    else
+    {
+        password = (const unsigned char *)"no user found";
+    }
+    // sqlite3_finalize(stmt); // FIXME
+    return (const char *)password;
 }

@@ -34,7 +34,7 @@ void saveAccountToFile(FILE *ptr, struct User u, struct Record r)
             r.accountType);
 }
 
-void stayOrReturn(int notGood, void f(struct User u), struct User u,  sqlite3 *db)
+void stayOrReturn(int notGood, void f(struct User u), struct User u, sqlite3 *db)
 {
     int option;
     if (notGood == 0)
@@ -73,37 +73,10 @@ void stayOrReturn(int notGood, void f(struct User u), struct User u,  sqlite3 *d
     }
 }
 
-void success(struct User u, sqlite3 *db)
-{
-    int option;
-    printf("\n✔ Success!\n\n");
-invalid:
-    printf("Enter 1 to go to the main menu and 0 to exit!\n");
-    scanf("%d", &option);
-    system("clear");
-    if (option == 1)
-    {
-        mainMenu(u, db);
-    }
-    else if (option == 0)
-    {
-        exit(1);
-    }
-    else
-    {
-        printf("Insert a valid operation!\n");
-        goto invalid;
-    }
-}
-
 void createNewAcc(struct User u, sqlite3 *db) // creat new account to an exist user
 {
     struct Record r; // the entred data
-    struct Record cr; // tmp to store data from the record file
-    char userName[50]; // i don't need it
-    FILE *pf = fopen(RECORDS, "a+"); // open records file
 
-noAccount:
     system("clear");
     printf("\t\t\t===== New record =====\n");
 
@@ -111,16 +84,12 @@ noAccount:
     scanf("%d/%d/%d", &r.deposit.month, &r.deposit.day, &r.deposit.year);
     printf("\nEnter the account number:");
     scanf("%d", &r.accountNbr);
-    // FIXME: the loop does  not break
-    while (getAccountFromFile(pf, userName, &cr)) // the loop break if there is no more accounts in records file
+    // TODO: check if the account s already exist
+    if (isAccountExist(u, db, r.accountNbr))
     {
-        printf("%s\n", userName);
-        // exit(1);
-        if (strcmp(userName, u.name) == 0 && cr.accountNbr == r.accountNbr)
-        {
-            printf("✖ This Account already exists for this user\n\n");
-            goto noAccount;
-        }
+        printf("✖ This Account already exists for this user\n\n");
+        sleep(2);
+        mainMenu(u, db);
     }
     printf("\nEnter the country:");
     scanf("%s", r.country);
@@ -130,13 +99,18 @@ noAccount:
     scanf("%lf", &r.amount);
     printf("\nChoose the type of account:\n\t-> saving\n\t-> current\n\t-> fixed01(for 1 year)\n\t-> fixed02(for 2 years)\n\t-> fixed03(for 3 years)\n\n\tEnter your choice:");
     scanf("%s", r.accountType);
-    //TODO: checkAccData(struct User u)
-    saveAccountToFile(pf, u, r); // save the entred data to the records file 
-    fclose(pf); // close the FD to free resourcese
+    // TODO: isAccDataValide(struct Record r)
+    if (isAccDataValide(r))
+    {
+        printf("✖ This Account already exists for this user\n\n");
+        sleep(2);
+        mainMenu(u, db);
+    }
+    // TODO: addRecord(struct Record r, sqlite3 *db) save the new record account to the data base
     success(u, db); // success message
 }
 
-void checkAllAccounts(struct User u,  sqlite3 *db)
+void checkAllAccounts(struct User u, sqlite3 *db)
 {
     char userName[100];
     struct Record r;
@@ -162,5 +136,5 @@ void checkAllAccounts(struct User u,  sqlite3 *db)
         }
     }
     fclose(pf);
-    success(u,db);
+    success(u, db);
 }

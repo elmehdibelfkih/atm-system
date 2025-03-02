@@ -1,6 +1,6 @@
 NAME = atm-system
 CC = gcc
-CFLAGS = -Wall -Wextra -Werror -fsanitize=address -MMD -MP
+CFLAGS = -Wall -Wextra -Werror -fsanitize=address -fsanitize=leak -MMD -MP
 LDFLAGS = -lsqlite3
 SRC_DIR = src
 OBJ_DIR = obj

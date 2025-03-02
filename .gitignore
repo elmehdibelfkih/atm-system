@@ -49,3 +49,4 @@ configure
 # Generated documentation
 docs/
 *.pdf
+.helper
