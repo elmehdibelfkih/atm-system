@@ -35,20 +35,20 @@ struct User
 // authentication functions
 void loginMenu(char a[50], char pass[50]);
 void registerMenu(char a[50], char pass[50]);
+int registration(sqlite3 *db);
 const char *getPassword(struct User u);
 
 // system function
-void createNewAcc(struct User u);
-void mainMenu(struct User u);
-void checkAllAccounts(struct User u);
+void createNewAcc(struct User u, sqlite3 *db);
+void checkAllAccounts(struct User u, sqlite3 *db);
 
 // menus functions
-void mainMenu(struct User u);
-void initMenu(struct User *u);
+void mainMenu(struct User u, sqlite3 *db);
+void initMenu(struct User *u, sqlite3 *db);
 
 
 // data base functions
 void intiDataBase(sqlite3 **db);
-void addUser(char *name, char *passWord, sqlite3 *db);
+int addUser(char *name, char *passWord, sqlite3 *db);
 
 #endif

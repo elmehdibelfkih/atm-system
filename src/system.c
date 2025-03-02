@@ -21,9 +21,9 @@ int getAccountFromFile(FILE *ptr, char name[50], struct Record *r)
 void saveAccountToFile(FILE *ptr, struct User u, struct Record r)
 {
     fprintf(ptr, "%d %d %s %d %d/%d/%d %s %d %.2lf %s\n\n",
-            (&r)->id, // &r->id,
+            (&r)->id,
             (&u)->id,
-            (&u)->name, // &u->id & u->name,^
+            (&u)->name,
             r.accountNbr,
             r.deposit.month,
             r.deposit.day,
@@ -34,7 +34,7 @@ void saveAccountToFile(FILE *ptr, struct User u, struct Record r)
             r.accountType);
 }
 
-void stayOrReturn(int notGood, void f(struct User u), struct User u)
+void stayOrReturn(int notGood, void f(struct User u), struct User u,  sqlite3 *db)
 {
     int option;
     if (notGood == 0)
@@ -47,7 +47,7 @@ void stayOrReturn(int notGood, void f(struct User u), struct User u)
         if (option == 0)
             f(u);
         else if (option == 1)
-            mainMenu(u);
+            mainMenu(u, db);
         else if (option == 2)
             exit(0);
         else
@@ -64,7 +64,7 @@ void stayOrReturn(int notGood, void f(struct User u), struct User u)
     if (option == 1)
     {
         system("clear");
-        mainMenu(u);
+        mainMenu(u, db);
     }
     else
     {
@@ -73,7 +73,7 @@ void stayOrReturn(int notGood, void f(struct User u), struct User u)
     }
 }
 
-void success(struct User u)
+void success(struct User u, sqlite3 *db)
 {
     int option;
     printf("\n✔ Success!\n\n");
@@ -83,7 +83,7 @@ invalid:
     system("clear");
     if (option == 1)
     {
-        mainMenu(u);
+        mainMenu(u, db);
     }
     else if (option == 0)
     {
@@ -96,7 +96,7 @@ invalid:
     }
 }
 
-void createNewAcc(struct User u) // creat new account to an exist user
+void createNewAcc(struct User u, sqlite3 *db) // creat new account to an exist user
 {
     struct Record r; // the entred data
     struct Record cr; // tmp to store data from the record file
@@ -133,10 +133,10 @@ noAccount:
     //TODO: checkAccData(struct User u)
     saveAccountToFile(pf, u, r); // save the entred data to the records file 
     fclose(pf); // close the FD to free resourcese
-    success(u); // success message
+    success(u, db); // success message
 }
 
-void checkAllAccounts(struct User u)
+void checkAllAccounts(struct User u,  sqlite3 *db)
 {
     char userName[100];
     struct Record r;
@@ -162,5 +162,5 @@ void checkAllAccounts(struct User u)
         }
     }
     fclose(pf);
-    success(u);
+    success(u,db);
 }

@@ -1,7 +1,8 @@
 #include "header.h"
 
-void mainMenu(struct User u)
+void mainMenu(struct User u, sqlite3 *db)
 {
+    (void)db; // remove it
     int option;
     system("clear");
     printf("\n\n\t\t======= ATM =======\n\n");
@@ -19,7 +20,7 @@ void mainMenu(struct User u)
     switch (option)
     {
     case 1:
-        createNewAcc(u);
+        createNewAcc(u, db);
         break;
     case 2:
         //TODO: add your **Update account information** function
@@ -28,7 +29,7 @@ void mainMenu(struct User u)
         //TODO: add your **Check the details of existing accounts** function
         break;
     case 4:
-        checkAllAccounts(u);
+        checkAllAccounts(u, db);
         break;
     case 5:
         //TODO: add your **Make transaction** function
@@ -47,18 +48,19 @@ void mainMenu(struct User u)
     }
 };
 
-void initMenu(struct User *u)
+void initMenu(struct User *u, sqlite3 *db)
 {
+    (void)db; // remove it
     int r = 0;
     int option;
     system("clear");
-    printf("\n\n\t\t======= ATM =======\n");
-    printf("\n\t\t-->> Feel free to login / register :\n");
-    printf("\n\t\t[1]- login\n");
-    printf("\n\t\t[2]- register\n");
-    printf("\n\t\t[3]- exit\n");
     while (!r)
     {
+        printf("\n\n\t\t======= ATM =======\n");
+        printf("\n\t\t-->> Feel free to login / register :\n");
+        printf("\n\t\t[1]- login\n");
+        printf("\n\t\t[2]- register\n");
+        printf("\n\t\t[3]- exit\n");
         scanf("%d", &option);
         switch (option)
         {
@@ -77,7 +79,7 @@ void initMenu(struct User *u)
             break;
         case 2:
             //TODO: add your **Registration** function
-            r = 1;
+            r = registration(db);
             break;
         case 3:
             exit(1);

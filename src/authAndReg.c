@@ -57,3 +57,37 @@ const char *getPassword(struct User u)
     fclose(fp);
     return "no user found";
 }
+
+int registration(sqlite3 *db) {
+    char a[50];
+    char pass[50];
+    struct termios oflags, nflags;
+
+    system("clear");
+    printf("\n\n\n\t\t\t\t   Bank Management System: registration\n");
+    printf("\n\t\t\t\t\t User Login:");
+    scanf("%s", a);
+
+    // disabling echo
+    tcgetattr(fileno(stdin), &oflags);
+    nflags = oflags;
+    nflags.c_lflag &= ~ECHO;
+    nflags.c_lflag |= ECHONL;
+
+    if (tcsetattr(fileno(stdin), TCSANOW, &nflags) != 0)
+    {
+        perror("tcsetattr");
+        exit(1);
+    }
+    printf("\n\t\t\t\t\t Enter the password:");
+    scanf("%s", pass);
+
+    // restore terminal
+    if (tcsetattr(fileno(stdin), TCSANOW, &oflags) != 0)
+    {
+        perror("tcsetattr");
+        exit(1);
+    }
+    system("clear");
+    return addUser(a, pass, db);
+}

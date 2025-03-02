@@ -25,7 +25,7 @@ void intiDataBase(sqlite3 **db)
         exit(1);
     }
 
-    // create the users table
+    // create the users table if not exist
     rc = sqlite3_exec(*db, users, 0, 0, &errMsg);
     if (rc != SQLITE_OK)
     {
@@ -34,8 +34,8 @@ void intiDataBase(sqlite3 **db)
         sqlite3_close(*db);
         exit(1);
     }
-    
-    // create the records table
+
+    // create the records table if not exist
     rc = sqlite3_exec(*db, records, 0, 0, &errMsg);
     if (rc != SQLITE_OK)
     {
@@ -51,18 +51,25 @@ void intiDataBase(sqlite3 **db)
     return;
 }
 
-void addUser(char *name, char *passWord, sqlite3 *db)
+int addUser(char *name, char *passWord, sqlite3 *db)
 {
     char *errMsg = NULL;
     char query[256];
 
-    snprintf(query, sizeof(query), "INSERT OR IGNORE INTO users (name, password) VALUES ('%s', '%s');", name, passWord);
+    snprintf(query, sizeof(query), "INSERT INTO users (name, password) VALUES ('%s', '%s');", name, passWord);
     int rc = sqlite3_exec(db, query, 0, 0, &errMsg);
     if (rc != SQLITE_OK)
     {
-        printf("SQL error: %s\n", errMsg);
+        if (strcmp("UNIQUE constraint failed: users.name", errMsg) == 0)
+        {
+            printf("\n\nThe username you entered is already in use. Please choose a different one.\n");
+        }
+        else
+        {
+            printf("%s\n", errMsg);
+        }
         sqlite3_free(errMsg);
-        sqlite3_close(db);
-        exit(1);
+        return 0;
     }
+    return 1;
 }
