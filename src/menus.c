@@ -28,7 +28,7 @@ void mainMenu(struct User u, sqlite3 *db)
         // TODO: add your **Check the details of existing accounts** function
         break;
     case 4:
-        checkAllAccounts(u, db);
+        // checkAllAccounts(u, db);
         break;
     case 5:
         // TODO: add your **Make transaction** function
@@ -40,7 +40,8 @@ void mainMenu(struct User u, sqlite3 *db)
         // TODO: add your **Transfer owner** function
         break;
     case 8:
-        exit(1);
+
+        initMenu(&u, db);
         break;
     default:
         printf("Invalid operation!\n");
@@ -80,6 +81,7 @@ void initMenu(struct User *u, sqlite3 *db)
             break;
         default:
             printf("Insert a valid operation!\n");
+            option = 0;
             break;
         }
     }

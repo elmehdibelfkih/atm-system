@@ -1,23 +1,5 @@
 #include "header.h"
 
-const char *RECORDS = "./data/records.txt";
-
-int getAccountFromFile(FILE *ptr, char name[50], struct Record *r)
-{
-    return fscanf(ptr, "%d %d %s %d %d/%d/%d %s %d %lf %s",
-                  &r->id,
-                  &r->userId,
-                  name,
-                  &r->accountNbr,
-                  &r->deposit.month,
-                  &r->deposit.day,
-                  &r->deposit.year,
-                  r->country,
-                  &r->phone,
-                  &r->amount,
-                  r->accountType) != EOF;
-}
-
 void saveAccountToFile(FILE *ptr, struct User u, struct Record r)
 {
     fprintf(ptr, "%d %d %s %d %d/%d/%d %s %d %.2lf %s\n\n",
@@ -110,31 +92,31 @@ void createNewAcc(struct User u, sqlite3 *db) // creat new account to an exist u
     success(u, db); // success message
 }
 
-void checkAllAccounts(struct User u, sqlite3 *db)
-{
-    char userName[100];
-    struct Record r;
+// void checkAllAccounts(struct User u, sqlite3 *db)
+// {
+//     char userName[100];
+//     struct Record r;
 
-    FILE *pf = fopen(RECORDS, "r");
+//     FILE *pf = fopen(RECORDS, "r");
 
-    system("clear");
-    printf("\t\t====== All accounts from user, %s =====\n\n", u.name);
-    while (getAccountFromFile(pf, userName, &r))
-    {
-        if (strcmp(userName, u.name) == 0)
-        {
-            printf("_____________________\n");
-            printf("\nAccount number:%d\nDeposit Date:%d/%d/%d \ncountry:%s \nPhone number:%d \nAmount deposited: $%.2f \nType Of Account:%s\n",
-                   r.accountNbr,
-                   r.deposit.day,
-                   r.deposit.month,
-                   r.deposit.year,
-                   r.country,
-                   r.phone,
-                   r.amount,
-                   r.accountType);
-        }
-    }
-    fclose(pf);
-    success(u, db);
-}
+//     system("clear");
+//     printf("\t\t====== All accounts from user, %s =====\n\n", u.name);
+//     while (getAccountFromFile(pf, userName, &r))
+//     {
+//         if (strcmp(userName, u.name) == 0)
+//         {
+//             printf("_____________________\n");
+//             printf("\nAccount number:%d\nDeposit Date:%d/%d/%d \ncountry:%s \nPhone number:%d \nAmount deposited: $%.2f \nType Of Account:%s\n",
+//                    r.accountNbr,
+//                    r.deposit.day,
+//                    r.deposit.month,
+//                    r.deposit.year,
+//                    r.country,
+//                    r.phone,
+//                    r.amount,
+//                    r.accountType);
+//         }
+//     }
+//     fclose(pf);
+//     success(u, db);
+// }

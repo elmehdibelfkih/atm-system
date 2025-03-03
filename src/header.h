@@ -40,7 +40,7 @@ const char *getPassword(struct User u, sqlite3 *db);
 
 // system function
 void createNewAcc(struct User u, sqlite3 *db);
-void checkAllAccounts(struct User u, sqlite3 *db);
+// void checkAllAccounts(struct User u, sqlite3 *db);
 
 // menus functions
 void mainMenu(struct User u, sqlite3 *db);
