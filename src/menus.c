@@ -1,11 +1,11 @@
 #include "header.h"
 
-void mainMenu(struct User u, sqlite3 *db)
+void mainMenu(struct User *u, sqlite3 *db)
 {
     int option;
     system("clear");
     printf("\n\n\t\t======= ATM =======\n\n");
-    printf("\n\t\t-->> Feel free to choose one of the options below <<--\n");
+    printf("\n\t\t-->> welcome %s <<--\n", u->name);
     printf("\n\t\t[1]- Create a new account\n");
     printf("\n\t\t[2]- Update account information\n");
     printf("\n\t\t[3]- Check accounts\n");
@@ -41,7 +41,7 @@ void mainMenu(struct User u, sqlite3 *db)
         break;
     case 8:
 
-        initMenu(&u, db);
+        initMenu(u, db);
         break;
     default:
         printf("Invalid operation!\n");
@@ -52,6 +52,7 @@ void initMenu(struct User *u, sqlite3 *db)
 {
     int r = 0;
     int option;
+    int err = 0;
     system("clear");
     while (!r)
     {
@@ -65,16 +66,19 @@ void initMenu(struct User *u, sqlite3 *db)
         {
         case 1:
             loginMenu(u->name, u->password);
-            if (strcmp(u->password, getPassword(*u, db)) != 0)
+            if (strcmp(u->password, getPassword(u, db, &err)) != 0 || err)
             {
                 system("clear");
                 printf("\n\nWrong password!! or User Name\n");
+                err = 0;
                 break;
             }
             r = 1;
+            mainMenu(u, db);
             break;
         case 2:
             r = registration(db, u);
+            mainMenu(u, db);
             break;
         case 3:
             exit(0);

@@ -70,15 +70,8 @@ int addUser(char *name, char *passWord, sqlite3 *db)
     return 1;
 }
 
-void addRecord(struct Record r, sqlite3 *db)
+const char *getPassword(struct User *u, sqlite3 *db, int *err)
 {
-    (void)r;
-    (void)db;
-}
-
-const char *getPassword(struct User u, sqlite3 *db)
-{
-    // struct User userChecker;
     const unsigned char *password;
     char *sql = "SELECT password FROM users WHERE name = ?";
     sqlite3_stmt *stmt;
@@ -87,15 +80,73 @@ const char *getPassword(struct User u, sqlite3 *db)
     {
         exit(1); // FIXME: avoid using exit
     }
-    sqlite3_bind_text(stmt, 1, u.name, -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 1, u->name, -1, SQLITE_STATIC);
     if (sqlite3_step(stmt) == SQLITE_ROW)
     {
         password = sqlite3_column_text(stmt, 0);
     }
     else
     {
+        *err = 1;
         password = (const unsigned char *)"no user found";
     }
     // sqlite3_finalize(stmt); // FIXME
     return (const char *)password;
+}
+
+int getId(struct User *u, sqlite3 *db, int *err)
+{
+    int id = -1;
+    char *sql = "SELECT id FROM users WHERE name = ?";
+    sqlite3_stmt *stmt;
+
+    if (sqlite3_prepare_v2(db, sql, -1, &stmt, NULL) != SQLITE_OK)
+    {
+        exit(1); // FIXME: avoid using exit
+    }
+    sqlite3_bind_text(stmt, 1, u->name, -1, SQLITE_STATIC);
+    if (sqlite3_step(stmt) == SQLITE_ROW)
+    {
+        id = sqlite3_column_int(stmt, 0);
+    }
+    else
+    {
+        *err = 1;
+        id = -1;
+    }
+    // sqlite3_finalize(stmt); // FIXME
+    return id;
+}
+
+void addRecord(struct Record r, sqlite3 *db)
+{
+    printf("hani\n");
+    char *sql = "INSERT INTO records (user_id, name, account_id, date_of_creation, country, phone, balance, type_of_account) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    sqlite3_stmt *stmt;
+
+    if (sqlite3_prepare_v2(db, sql, -1, &stmt, NULL) != SQLITE_OK)
+    {
+        fprintf(stderr, "SQL Error: %s\n", sqlite3_errmsg(db));
+        return;
+    }
+
+    // Bind parameters with correct indices
+    sqlite3_bind_int(stmt, 1, r.userId);
+    sqlite3_bind_text(stmt, 2, r.name, -1, SQLITE_STATIC);
+    sqlite3_bind_int(stmt, 3, r.accountNbr);
+    sqlite3_bind_text(stmt, 4, r.date, -1, SQLITE_STATIC); // FIXME
+    sqlite3_bind_text(stmt, 5, r.country, -1, SQLITE_STATIC);
+    sqlite3_bind_int(stmt, 6, r.phone); // Assuming phone is a string
+    sqlite3_bind_double(stmt, 7, r.amount);
+    sqlite3_bind_text(stmt, 8, r.accountType, -1, SQLITE_STATIC);
+
+    // Execute the statement
+    if (sqlite3_step(stmt) != SQLITE_DONE)
+    {
+        fprintf(stderr, "SQL Execution Error: %s\n", sqlite3_errmsg(db));
+        exit(1);
+    }
+
+    // Cleanup
+    sqlite3_finalize(stmt);
 }

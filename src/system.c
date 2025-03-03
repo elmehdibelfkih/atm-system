@@ -16,7 +16,7 @@ void saveAccountToFile(FILE *ptr, struct User u, struct Record r)
             r.accountType);
 }
 
-void stayOrReturn(int notGood, void f(struct User u), struct User u, sqlite3 *db)
+void stayOrReturn(int notGood, void f(struct User u), struct User *u, sqlite3 *db)
 {
     int option;
     if (notGood == 0)
@@ -27,7 +27,7 @@ void stayOrReturn(int notGood, void f(struct User u), struct User u, sqlite3 *db
         printf("\nEnter 0 to try again, 1 to return to main menu and 2 to exit:");
         scanf("%d", &option);
         if (option == 0)
-            f(u);
+            f(*u); // FIXME
         else if (option == 1)
             mainMenu(u, db);
         else if (option == 2)
@@ -55,24 +55,18 @@ void stayOrReturn(int notGood, void f(struct User u), struct User u, sqlite3 *db
     }
 }
 
-void createNewAcc(struct User u, sqlite3 *db) // creat new account to an exist user
+void createNewAcc(struct User *u, sqlite3 *db) // creat new account to an exist user
 {
     struct Record r; // the entred data
+    int err = 0;
 
     system("clear");
     printf("\t\t\t===== New record =====\n");
 
     printf("\nEnter today's date(mm/dd/yyyy):");
-    scanf("%d/%d/%d", &r.deposit.month, &r.deposit.day, &r.deposit.year);
-    printf("\nEnter the account number:");
-    scanf("%d", &r.accountNbr);
-    // TODO: check if the account s already exist
-    if (isAccountExist(u, db, r.accountNbr))
-    {
-        printf("✖ This Account already exists for this user\n\n");
-        sleep(2);
-        mainMenu(u, db);
-    }
+    scanf("%s", r.date);
+    // scanf("%d/%d/%d", &r.deposit.month, &r.deposit.day, &r.deposit.year);
+    scanAccountNumber(&r, u, db);
     printf("\nEnter the country:");
     scanf("%s", r.country);
     printf("\nEnter the phone number:");
@@ -81,16 +75,12 @@ void createNewAcc(struct User u, sqlite3 *db) // creat new account to an exist u
     scanf("%lf", &r.amount);
     printf("\nChoose the type of account:\n\t-> saving\n\t-> current\n\t-> fixed01(for 1 year)\n\t-> fixed02(for 2 years)\n\t-> fixed03(for 3 years)\n\n\tEnter your choice:");
     scanf("%s", r.accountType);
-    // TODO: isAccDataValide(struct Record r)
-    if (isAccDataValide(r))
-    {
-        printf("✖ This Account already exists for this user\n\n");
-        sleep(2);
-        mainMenu(u, db);
-    }
-    // TODO: addRecord(struct Record r, sqlite3 *db) save the new record account to the data base
+    strcpy( r.name , u->name);
+    r.userId = getId(u, db, &err);
+    addRecord(r, db);
     success(u, db); // success message
 }
+
 
 // void checkAllAccounts(struct User u, sqlite3 *db)
 // {
