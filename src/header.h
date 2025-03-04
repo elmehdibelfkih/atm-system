@@ -10,6 +10,7 @@
 #include <limits.h>
 #include <ctype.h>
 #include <errno.h>
+#include <math.h>
 
 struct Date
 {
@@ -26,7 +27,7 @@ struct Record
     int userId;
     int accountNbr;
     double amount;
-    char date[10];
+    char date[11];
     struct Date deposit;
     struct Date withdraw;
 };
@@ -62,12 +63,16 @@ int isAccountExist(struct User *u, sqlite3 *db, int accountNbr);
 int isAccDataValide(struct Record r);
 void success(struct User *u, sqlite3 *db);
 void scanAccountNumber(struct Record *r, struct User *u, sqlite3 *db);
+void scanPhoneNumber(struct Record *r);
+void scanDeposit(struct Record *r);
+void scanDate(struct Record *r);
+int isLeapYear(int year);
 
-//tools
-int	n_of_world(char const *s, char c);
-int	plen(char **spl, const char *s, char c);
-int	clear(char **spl, int p);
-char	**split(char const *s, char c);
-char	*substr(char const *s, unsigned int start, size_t len);
+// tools
+int n_of_world(char const *s, char c);
+int plen(char **spl, const char *s, char c);
+int clear(char **spl, int p);
+char **split(char const *s, char c);
+char *substr(char const *s, unsigned int start, size_t len);
 
 #endif

@@ -1,21 +1,5 @@
 #include "header.h"
 
-void saveAccountToFile(FILE *ptr, struct User u, struct Record r)
-{
-    fprintf(ptr, "%d %d %s %d %d/%d/%d %s %d %.2lf %s\n\n",
-            (&r)->id,
-            (&u)->id,
-            (&u)->name,
-            r.accountNbr,
-            r.deposit.month,
-            r.deposit.day,
-            r.deposit.year,
-            r.country,
-            r.phone,
-            r.amount,
-            r.accountType);
-}
-
 void stayOrReturn(int notGood, void f(struct User u), struct User *u, sqlite3 *db)
 {
     int option;
@@ -63,16 +47,12 @@ void createNewAcc(struct User *u, sqlite3 *db) // creat new account to an exist 
     system("clear");
     printf("\t\t\t===== New record =====\n");
 
-    printf("\nEnter today's date(mm/dd/yyyy):");
-    scanf("%s", r.date);
-    // scanf("%d/%d/%d", &r.deposit.month, &r.deposit.day, &r.deposit.year);
+    scanDate(&r);
     scanAccountNumber(&r, u, db);
     printf("\nEnter the country:");
     scanf("%s", r.country);
-    printf("\nEnter the phone number:");
-    scanf("%d", &r.phone);
-    printf("\nEnter amount to deposit: $");
-    scanf("%lf", &r.amount);
+    scanPhoneNumber(&r);
+    scanDeposit(&r);
     printf("\nChoose the type of account:\n\t-> saving\n\t-> current\n\t-> fixed01(for 1 year)\n\t-> fixed02(for 2 years)\n\t-> fixed03(for 3 years)\n\n\tEnter your choice:");
     scanf("%s", r.accountType);
     strcpy( r.name , u->name);
