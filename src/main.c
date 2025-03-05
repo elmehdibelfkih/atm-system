@@ -1,5 +1,7 @@
 #include "header.h"
 
+MyError my_error = {NULL};
+
 int main()
 {
     struct User u;

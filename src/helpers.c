@@ -1,13 +1,20 @@
 #include "header.h"
 
-int isAccountExist(struct User *u, sqlite3 *db, int accountNbr)
+int isAccountExist(struct User *u, sqlite3 *db, int accountId)
 {
-    struct Record cr; // tmp to store data from the record file
+    // struct Record cr; // tmp to store data from the record file
+    // char *sql = "SELECT * FROM records WHERE name = '?' AND accountId = '?'";
+    // sqlite3_stmt *stmt;
 
-    (void)cr;
+    // if (sqlite3_prepare_v2(db, sql, -1, &stmt, NULL) != SQLITE_OK)
+    // {
+    //     exit(1); // FIXME: avoid using exit
+    // }
+
+    // (void)cr;
     (void)u;
     (void)db;
-    (void)accountNbr;
+    (void)accountId;
     return 0;
 }
 
@@ -46,14 +53,14 @@ void scanAccountNumber(struct Record *r, struct User *u, sqlite3 *db)
     char *endptr;
     long num;
 
-    while (getchar() != '\n')
-        ;
+    // while (getchar() != '\n')
+    //     ;
     while (1)
     {
         printf("\nEnter the account number: ");
         if (!fgets(input, sizeof(input), stdin))
         {
-            printf("❌ Error reading input. Please try again.\n");
+            printf("❌ Error reading input. Please try again.");
             continue;
         }
 
@@ -63,30 +70,30 @@ void scanAccountNumber(struct Record *r, struct User *u, sqlite3 *db)
             start++;
         if (*start == '\0')
         {
-            printf("1❌ Invalid input! Please enter a valid account number.\n");
+            printf("1❌ Invalid input! Please enter a valid account number.");
             continue;
         }
         num = strtol(start, &endptr, 10);
         if (*endptr != '\0')
         {
-            printf("❌ Invalid input! Only numbers are allowed.\n");
+            printf("❌ Invalid input! Only numbers are allowed.");
             continue;
         }
         if ((num == LONG_MAX || num == LONG_MIN) && errno == ERANGE)
         {
-            printf("❌ Error: Number out of range.\n");
+            printf("❌ Error: Number out of range.");
             continue;
         }
         if (num > INT_MAX || num < INT_MIN)
         {
-            printf("❌ Error: Integer overflow/underflow.\n");
+            printf("❌ Error: Integer overflow/underflow.");
             continue;
         }
-        r->accountNbr = (int)num;
+        r->accountId = (int)num;
         // TODO: check if the account s already exist
-        if (isAccountExist(u, db, r->accountNbr))
+        if (isAccountExist(u, db, r->accountId))
         {
-            printf("❌ Error: This account already exists. Please enter a different number.\n");
+            printf("❌ Error: This account already exists. Please enter a different number.");
             continue;
         }
         break;
@@ -99,14 +106,15 @@ void scanPhoneNumber(struct Record *r)
     char *endptr;
     long num;
 
-    while (getchar() != '\n')
-        ;
+    // while (getchar() != '\n')
+    //     ;
+
     while (1)
     {
         printf("\nEnter the phone number:");
         if (!fgets(input, sizeof(input), stdin))
         {
-            printf("❌ Error reading input. Please try again.\n");
+            printf("❌ Error reading input. Please try again.");
             continue;
         }
 
@@ -116,23 +124,23 @@ void scanPhoneNumber(struct Record *r)
             start++;
         if (*start == '\0')
         {
-            printf("1❌ Invalid input! Please enter a valid account number.\n");
+            printf("1❌ Invalid input! Please enter a valid account number.");
             continue;
         }
         num = strtol(start, &endptr, 10);
         if (*endptr != '\0')
         {
-            printf("❌ Invalid input! Only numbers are allowed.\n");
+            printf("❌ Invalid input! Only numbers are allowed.");
             continue;
         }
         if ((num == LONG_MAX || num == LONG_MIN) && errno == ERANGE)
         {
-            printf("❌ Error: Number out of range.\n");
+            printf("❌ Error: Number out of range.");
             continue;
         }
         if (num > INT_MAX || num < INT_MIN)
         {
-            printf("❌ Error: Integer overflow/underflow.\n");
+            printf("❌ Error: Integer overflow/underflow.");
             continue;
         }
         r->phone = (int)num;
@@ -148,14 +156,13 @@ void scanDeposit(struct Record *r)
 
     while (getchar() != '\n')
         ;
-
     while (1)
     {
         printf("\nEnter amount to deposit: $");
 
         if (!fgets(input, sizeof(input), stdin))
         {
-            printf("❌ Error reading input. Please try again.\n");
+            printf("❌ Error reading input. Please try again.");
             continue;
         }
         input[strcspn(input, "\n")] = 0;
@@ -165,19 +172,19 @@ void scanDeposit(struct Record *r)
 
         if (*start == '\0')
         {
-            printf("❌ Invalid input! Please enter a valid amount.\n");
+            printf("❌ Invalid input! Please enter a valid amount.");
             continue;
         }
         errno = 0;
         num = strtod(start, &endptr);
         if (*endptr != '\0')
         {
-            printf("❌ Invalid input! Only numbers are allowed.\n");
+            printf("❌ Invalid input! Only numbers are allowed.");
             continue;
         }
         if ((num == HUGE_VAL || num == -HUGE_VAL) && errno == ERANGE)
         {
-            printf("❌ Error: Number out of range.\n");
+            printf("❌ Error: Number out of range.");
             continue;
         }
         r->amount = num;
@@ -205,24 +212,24 @@ void scanDate(struct Record *r)
 
         if (!fgets(input, sizeof(input), stdin))
         {
-            printf("❌ Error reading input. Please try again.\n");
+            printf("❌ Error reading input. Please try again.");
             continue;
         }
         input[strcspn(input, "\n")] = 0;
 
         if (sscanf(input, "%2d/%2d/%4d", &month, &day, &year) != 3)
         {
-            printf("❌ Invalid format! Please enter in MM/DD/YYYY format.\n");
+            printf("❌ Invalid format! Please enter in MM/DD/YYYY format.");
             continue;
         }
         if (year < 1900 || year > 2200)
         {
-            printf("❌ Invalid year!.\n");
+            printf("❌ Invalid year!.");
             continue;
         }
         if (month < 1 || month > 12)
         {
-            printf("❌ Invalid month! Enter a value between 1 and 12.\n");
+            printf("❌ Invalid month! Enter a value between 1 and 12.");
             continue;
         }
         if (month == 2 && isLeapYear(year))
@@ -231,7 +238,7 @@ void scanDate(struct Record *r)
         }
         if (day < 1 || day > daysInMonth[month])
         {
-            printf("❌ Invalid day! Enter a valid day for the given month.\n");
+            printf("❌ Invalid day! Enter a valid day for the given month.");
             continue;
         }
         snprintf(r->date, sizeof(r->date), "%02d/%02d/%04d", month, day, year);
@@ -240,4 +247,93 @@ void scanDate(struct Record *r)
         r->deposit.year = year;
         break;
     }
+}
+
+void scanCountry(struct Record *r)
+{
+    printf("\nEnter the country:");
+    scanf("%s", r->country);
+    while (!isCountryValid(r->country))
+    {
+        printf("\n❌ Invalid country! Enter a valid country.");
+        printf("\n the country must be lowercase.\n");
+        printf("\nEnter the country:");
+        scanf("%s", r->country);
+    }
+}
+
+int isCountryValid(const char *name)
+{
+    const char *countries[] = {
+        "afghanistan", "albania", "algeria", "andorra", "angola", "antigua and barbuda",
+        "argentina", "armenia", "australia", "austria", "azerbaijan", "bahamas", "bahrain",
+        "bangladesh", "barbados", "belarus", "belgium", "belize", "benin", "bhutan", "bolivia",
+        "bosnia and herzegovina", "botswana", "brazil", "brunei", "bulgaria", "burkina faso",
+        "burundi", "cabo verde", "cambodia", "cameroon", "canada", "central african republic",
+        "chad", "chile", "china", "colombia", "comoros", "congo", "costa rica", "croatia",
+        "cuba", "cyprus", "czech republic", "democratic republic of the congo", "denmark",
+        "djibouti", "dominica", "dominican republic", "ecuador", "egypt", "el salvador",
+        "equatorial guinea", "eritrea", "estonia", "eswatini", "ethiopia", "fiji", "finland",
+        "france", "gabon", "gambia", "georgia", "germany", "ghana", "greece", "grenada",
+        "guatemala", "guinea", "guinea-bissau", "guyana", "haiti", "honduras", "hungary",
+        "iceland", "india", "indonesia", "iran", "iraq", "ireland", "israel", "italy",
+        "ivory coast", "jamaica", "japan", "jordan", "kazakhstan", "kenya", "kiribati",
+        "kuwait", "kyrgyzstan", "laos", "latvia", "lebanon", "lesotho", "liberia", "libya",
+        "liechtenstein", "lithuania", "luxembourg", "madagascar", "malawi", "malaysia",
+        "maldives", "mali", "malta", "marshall islands", "mauritania", "mauritius",
+        "mexico", "micronesia", "moldova", "monaco", "mongolia", "montenegro", "morocco",
+        "mozambique", "myanmar", "namibia", "nauru", "nepal", "netherlands", "new zealand",
+        "nicaragua", "niger", "nigeria", "north korea", "north macedonia", "norway",
+        "oman", "pakistan", "palau", "palestine", "panama", "papua new guinea", "paraguay",
+        "peru", "philippines", "poland", "portugal", "qatar", "romania", "russia", "rwanda",
+        "saint kitts and nevis", "saint lucia", "saint vincent and the grenadines", "samoa",
+        "san marino", "sao tome and principe", "saudi arabia", "senegal", "serbia", "seychelles",
+        "sierra leone", "singapore", "slovakia", "slovenia", "solomon islands", "somalia",
+        "south africa", "south korea", "south sudan", "spain", "sri lanka", "sudan", "suriname",
+        "sweden", "switzerland", "syria", "taiwan", "tajikistan", "tanzania", "thailand",
+        "timor-leste", "togo", "tonga", "trinidad and tobago", "tunisia", "turkey", "turkmenistan",
+        "tuvalu", "uganda", "ukraine", "united arab emirates", "united kingdom", "united states",
+        "uruguay", "uzbekistan", "vanuatu", "vatican city", "venezuela", "vietnam",
+        "yemen", "zambia", "zimbabwe"};
+    const size_t countries_count = 196;
+
+    for (size_t i = 0; i < countries_count; i++)
+    {
+        if (strcmp(countries[i], name) == 0)
+        {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+void scanAccountType(struct Record *r)
+{
+    printf("\nChoose the type of account:\n\t-> saving\n\t-> current\n\t-> fixed01(for 1 year)\n\t-> fixed02(for 2 years)\n\t-> fixed03(for 3 years)\n\n\tEnter your choice:");
+    scanf("%s", r->accountType);
+    while (!isAccountTypeVlid(r->accountType))
+    {
+        printf("\n❌ Invalid account type! Enter a valid account type.");
+        printf("\n the account type must be lowercase.");
+        printf("\nChoose the type of account:\n\t-> saving\n\t-> current\n\t-> fixed01(for 1 year)\n\t-> fixed02(for 2 years)\n\t-> fixed03(for 3 years)\n\n\tEnter your choice:");
+        scanf("%s", r->accountType);
+    }
+}
+
+int isAccountTypeVlid(const char *type)
+{
+    const size_t typesCount = 5;
+
+    const char *types[] = {
+        "saving", "current", "fixed01", "fixed02", "fixed03"
+    };
+
+    for (size_t i = 0; i < typesCount; i++)
+    {
+        if (strcmp(types[i], type) == 0)
+        {
+            return 1;
+        }
+    }
+    return 0;
 }

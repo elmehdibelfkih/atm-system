@@ -3,6 +3,7 @@
 void mainMenu(struct User *u, sqlite3 *db)
 {
     int option;
+
     system("clear");
     printf("\n\n\t\t======= ATM =======\n\n");
     printf("\n\t\t-->> welcome %s <<--\n", u->name);
@@ -23,21 +24,26 @@ void mainMenu(struct User *u, sqlite3 *db)
         break;
     case 2:
         // TODO: add your **Update account information** function
+        updateAccount(u, db);
         break;
     case 3:
         // TODO: add your **Check the details of existing accounts** function
+        // checkExistingAccounts(u, db);
         break;
     case 4:
         // checkAllAccounts(u, db);
         break;
     case 5:
         // TODO: add your **Make transaction** function
+        // makeTransaction(u, db);
         break;
     case 6:
         // TODO: add your **Remove existing account** function
+        // removeExistingAccount(u, db);
         break;
     case 7:
         // TODO: add your **Transfer owner** function
+        // transferAccount(u, db);
         break;
     case 8:
 
@@ -52,7 +58,7 @@ void initMenu(struct User *u, sqlite3 *db)
 {
     int r = 0;
     int option;
-    int err = 0;
+    char tmpPass[50];
     system("clear");
     while (!r)
     {
@@ -66,11 +72,16 @@ void initMenu(struct User *u, sqlite3 *db)
         {
         case 1:
             loginMenu(u->name, u->password);
-            if (strcmp(u->password, getPassword(u, db, &err)) != 0 || err)
+            if (getPassword(u, db, tmpPass))
+            {
+                system("clear");
+                printf("%s\n", my_error.error_message);
+                continue;
+            }
+            if (strcmp(u->password, tmpPass) != 0)
             {
                 system("clear");
                 printf("\n\nWrong password!! or User Name\n");
-                err = 0;
                 break;
             }
             r = 1;

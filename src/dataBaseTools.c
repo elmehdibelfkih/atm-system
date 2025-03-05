@@ -3,20 +3,6 @@
 void intiDataBase(sqlite3 **db)
 {
     char *errMsg = NULL;
-    char *users = "CREATE TABLE IF NOT EXISTS users("
-                  "id INTEGER PRIMARY KEY AUTOINCREMENT, "
-                  "name TEXT UNIQUE NOT NULL, "
-                  "password TEXT NOT NULL);";
-    char *records = "CREATE TABLE IF NOT EXISTS records("
-                    "id INTEGER PRIMARY KEY AUTOINCREMENT, "
-                    "user_id INTEGER NOT NULL, "
-                    "name TEXT NOT NULL, "
-                    "account_id INTEGER UNIQUE NOT NULL, "
-                    "date_of_creation DATE NOT NULL, "
-                    "country TEXT NOT NULL, "
-                    "phone NUMERIC NOT NULL, "
-                    "balance REAL NOT NULL, " // MUST BE FLOAT
-                    "type_of_account TEXT NOT NULL);";
     int rc = sqlite3_open("./data/atm.db", db);
 
     if (rc)
@@ -26,7 +12,7 @@ void intiDataBase(sqlite3 **db)
     }
 
     // create the users table if not exist
-    rc = sqlite3_exec(*db, users, 0, 0, &errMsg);
+    rc = sqlite3_exec(*db, SQLLITE_USERS_TABLE, 0, 0, &errMsg);
     if (rc != SQLITE_OK)
     {
         printf("SQL error: %s\n", errMsg);
@@ -36,7 +22,7 @@ void intiDataBase(sqlite3 **db)
     }
 
     // create the records table if not exist
-    rc = sqlite3_exec(*db, records, 0, 0, &errMsg);
+    rc = sqlite3_exec(*db, SQLLITE_RECORDS_TABLE, 0, 0, &errMsg);
     if (rc != SQLITE_OK)
     {
         printf("SQL error: %s\n", errMsg);
@@ -70,37 +56,38 @@ int addUser(char *name, char *passWord, sqlite3 *db)
     return 1;
 }
 
-const char *getPassword(struct User *u, sqlite3 *db, int *err)
+// return 1 if an error happen
+// return 0 if every thing is ok
+int getPassword(struct User *u, sqlite3 *db, char password[50])
 {
-    const unsigned char *password;
-    char *sql = "SELECT password FROM users WHERE name = ?";
     sqlite3_stmt *stmt;
 
-    if (sqlite3_prepare_v2(db, sql, -1, &stmt, NULL) != SQLITE_OK)
+    if (sqlite3_prepare_v2(db, SQLLITE_GET_PASSWORD, -1, &stmt, NULL) != SQLITE_OK)
     {
-        exit(1); // FIXME: avoid using exit
+        my_error.error_message = DATABASE_ERROR;
+        return 1;
     }
     sqlite3_bind_text(stmt, 1, u->name, -1, SQLITE_STATIC);
     if (sqlite3_step(stmt) == SQLITE_ROW)
     {
-        password = sqlite3_column_text(stmt, 0);
+        strcpy(password, (char *)sqlite3_column_text(stmt, 0));
     }
     else
     {
-        *err = 1;
-        password = (const unsigned char *)"no user found";
+        my_error.error_message = DATABASE_ERROR;
+        sqlite3_finalize(stmt);
+        return 0;
     }
-    // sqlite3_finalize(stmt); // FIXME
-    return (const char *)password;
+    sqlite3_finalize(stmt);
+    return 0;
 }
 
-int getId(struct User *u, sqlite3 *db, int *err)
+int getId(struct User *u, sqlite3 *db, int *err) // FIXME: set the custom errno
 {
     int id = -1;
-    char *sql = "SELECT id FROM users WHERE name = ?";
     sqlite3_stmt *stmt;
 
-    if (sqlite3_prepare_v2(db, sql, -1, &stmt, NULL) != SQLITE_OK)
+    if (sqlite3_prepare_v2(db, SQLLITE_GET_ID, -1, &stmt, NULL) != SQLITE_OK)
     {
         exit(1); // FIXME: avoid using exit
     }
@@ -120,11 +107,9 @@ int getId(struct User *u, sqlite3 *db, int *err)
 
 void addRecord(struct Record r, sqlite3 *db)
 {
-    printf("hani\n");
-    char *sql = "INSERT INTO records (user_id, name, account_id, date_of_creation, country, phone, balance, type_of_account) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
     sqlite3_stmt *stmt;
 
-    if (sqlite3_prepare_v2(db, sql, -1, &stmt, NULL) != SQLITE_OK)
+    if (sqlite3_prepare_v2(db, SQLLITE_ADD_RECCORD, -1, &stmt, NULL) != SQLITE_OK)
     {
         fprintf(stderr, "SQL Error: %s\n", sqlite3_errmsg(db));
         return;
@@ -133,7 +118,7 @@ void addRecord(struct Record r, sqlite3 *db)
     // Bind parameters with correct indices
     sqlite3_bind_int(stmt, 1, r.userId);
     sqlite3_bind_text(stmt, 2, r.name, -1, SQLITE_STATIC);
-    sqlite3_bind_int(stmt, 3, r.accountNbr);
+    sqlite3_bind_int(stmt, 3, r.accountId);
     sqlite3_bind_text(stmt, 4, r.date, -1, SQLITE_STATIC); // FIXME
     sqlite3_bind_text(stmt, 5, r.country, -1, SQLITE_STATIC);
     sqlite3_bind_int(stmt, 6, r.phone); // Assuming phone is a string

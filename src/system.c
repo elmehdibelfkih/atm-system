@@ -1,47 +1,8 @@
 #include "header.h"
 
-void stayOrReturn(int notGood, void f(struct User u), struct User *u, sqlite3 *db)
-{
-    int option;
-    if (notGood == 0)
-    {
-        system("clear");
-        printf("\n✖ Record not found!!\n");
-    invalid:
-        printf("\nEnter 0 to try again, 1 to return to main menu and 2 to exit:");
-        scanf("%d", &option);
-        if (option == 0)
-            f(*u); // FIXME
-        else if (option == 1)
-            mainMenu(u, db);
-        else if (option == 2)
-            exit(0);
-        else
-        {
-            printf("Insert a valid operation!\n");
-            goto invalid;
-        }
-    }
-    else
-    {
-        printf("\nEnter 1 to go to the main menu and 0 to exit:");
-        scanf("%d", &option);
-    }
-    if (option == 1)
-    {
-        system("clear");
-        mainMenu(u, db);
-    }
-    else
-    {
-        system("clear");
-        exit(1);
-    }
-}
-
 void createNewAcc(struct User *u, sqlite3 *db) // creat new account to an exist user
 {
-    struct Record r; // the entred data
+    struct Record r;
     int err = 0;
 
     system("clear");
@@ -49,44 +10,47 @@ void createNewAcc(struct User *u, sqlite3 *db) // creat new account to an exist 
 
     scanDate(&r);
     scanAccountNumber(&r, u, db);
-    printf("\nEnter the country:");
-    scanf("%s", r.country);
     scanPhoneNumber(&r);
+    scanCountry(&r);
     scanDeposit(&r);
-    printf("\nChoose the type of account:\n\t-> saving\n\t-> current\n\t-> fixed01(for 1 year)\n\t-> fixed02(for 2 years)\n\t-> fixed03(for 3 years)\n\n\tEnter your choice:");
-    scanf("%s", r.accountType);
-    strcpy( r.name , u->name);
+    scanAccountType(&r);
+    strcpy(r.name, u->name);
     r.userId = getId(u, db, &err);
     addRecord(r, db);
-    success(u, db); // success message
+    success(u, db);
+}
+
+void updateAccount(struct User *u, sqlite3 *db){
+    (void)u;
+    (void)db;
+
+    printf("Please enter the Account ID you wish to modify or update. Ensure the ID is correct and exists in the system.\n");
+    printf("account ID: ");
 }
 
 
-// void checkAllAccounts(struct User u, sqlite3 *db)
-// {
-//     char userName[100];
-//     struct Record r;
+void checkAllAccounts(struct User *u, sqlite3 *db)
+{
+    // char userName[100];
+    // struct Record r;
 
-//     FILE *pf = fopen(RECORDS, "r");
-
-//     system("clear");
-//     printf("\t\t====== All accounts from user, %s =====\n\n", u.name);
-//     while (getAccountFromFile(pf, userName, &r))
-//     {
-//         if (strcmp(userName, u.name) == 0)
-//         {
-//             printf("_____________________\n");
-//             printf("\nAccount number:%d\nDeposit Date:%d/%d/%d \ncountry:%s \nPhone number:%d \nAmount deposited: $%.2f \nType Of Account:%s\n",
-//                    r.accountNbr,
-//                    r.deposit.day,
-//                    r.deposit.month,
-//                    r.deposit.year,
-//                    r.country,
-//                    r.phone,
-//                    r.amount,
-//                    r.accountType);
-//         }
-//     }
-//     fclose(pf);
-//     success(u, db);
-// }
+    system("clear");
+    printf("\t\t====== All accounts from user, %s =====\n\n", u->name);
+    // while (getAccountFromFile(pf, userName, &r))
+    // {
+    //     if (strcmp(userName, u.name) == 0)
+    //     {
+    //         printf("_____________________\n");
+    //         printf("\nAccount number:%d\nDeposit Date:%d/%d/%d \ncountry:%s \nPhone number:%d \nAmount deposited: $%.2f \nType Of Account:%s\n",
+    //                r.accountId,
+    //                r.deposit.day,
+    //                r.deposit.month,
+    //                r.deposit.year,
+    //                r.country,
+    //                r.phone,
+    //                r.amount,
+    //                r.accountType);
+    //     }
+    // }
+    success(u, db);
+}
