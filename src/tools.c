@@ -1,9 +1,9 @@
 #include "header.h"
 
-int	n_of_world(char const *s, char c)
+int n_of_world(char const *s, char c)
 {
-	int	i;
-	int	j;
+	int i;
+	int j;
 
 	i = 0;
 	j = 0;
@@ -17,9 +17,9 @@ int	n_of_world(char const *s, char c)
 	return (j);
 }
 
-int	clear(char **spl, int p)
+int clear(char **spl, int p)
 {
-	int	i;
+	int i;
 
 	i = 0;
 	while (i < p)
@@ -28,12 +28,12 @@ int	clear(char **spl, int p)
 	return (-1);
 }
 
-int	plen(char **spl, const char *s, char c)
+int plen(char **spl, const char *s, char c)
 {
-	int			i;
-	size_t		p;
-	size_t		len;
-	int			start;
+	int i;
+	size_t p;
+	size_t len;
+	int start;
 
 	i = -1;
 	len = 0;
@@ -55,9 +55,9 @@ int	plen(char **spl, const char *s, char c)
 	return (0);
 }
 
-char	**split(char const *s, char c)
+char **split(char const *s, char c)
 {
-	char	**spl;
+	char **spl;
 
 	if (!s)
 		return (NULL);
@@ -70,11 +70,11 @@ char	**split(char const *s, char c)
 	return (spl);
 }
 
-char	*substr(char const *s, unsigned int start, size_t len)
+char *substr(char const *s, unsigned int start, size_t len)
 {
-	unsigned int	i;
-	unsigned int	j;
-	char			*s1;
+	unsigned int i;
+	unsigned int j;
+	char *s1;
 
 	if (!s)
 		return (NULL);
@@ -92,4 +92,37 @@ char	*substr(char const *s, unsigned int start, size_t len)
 		s1[j++] = s[start++];
 	s1[j] = '\0';
 	return (s1);
+}
+
+void scanInt(int *result)
+{
+	char input[256];
+	char *endptr;
+
+	while (1)
+	{
+		printf("\n\t\tEnter an option: ");
+
+		if (!fgets(input, sizeof(input), stdin))
+		{
+			printf("Insert a valid operation!\n");
+			continue;
+		}
+		input[strcspn(input, "\n")] = 0;
+		if (*input == '\0' || strspn(input, "0123456789") != strlen(input))
+		{
+			printf("Insert a valid operation!\n");
+			continue;
+		}
+		errno = 0;
+		long long num = strtoll(input, &endptr, 10);
+		if (((num == LLONG_MAX || num == LLONG_MIN) && errno == ERANGE) ||
+			*endptr != '\0' || num > INT_MAX || num < INT_MIN)
+		{
+			printf("Insert a valid operation!\n");
+			continue;
+		}
+		*result = (int)num;
+		break;
+	}
 }

@@ -5,15 +5,14 @@ char *USERS = "./data/users.txt";
 
 void loginMenu(char a[50], char pass[50])
 {
-    printf("hani dazt mn hna\n");
     struct termios oflags, nflags;
 
     system("clear");
     printf("\n\n\n\t\t\t\t   Bank Management System\n");
     printf("\n\t\t\t\t\t User Login: ");
-    scanf("%s", a);
+    fgets(a, 50, stdin);
+    a[strcspn(a, "\n")] = 0;
 
-    // disabling echo
     tcgetattr(fileno(stdin), &oflags);
     nflags = oflags;
     nflags.c_lflag &= ~ECHO;
@@ -25,9 +24,9 @@ void loginMenu(char a[50], char pass[50])
         return exit(1);
     }
     printf("\n\t\t\t\t\t Enter the password to login: ");
-    scanf("%s", pass);
+    fgets(pass, 50, stdin);
+    pass[strcspn(pass, "\n")] = 0;
 
-    // restore terminal
     if (tcsetattr(fileno(stdin), TCSANOW, &oflags) != 0)
     {
         perror("tcsetattr");
@@ -39,11 +38,13 @@ int registration(sqlite3 *db, struct User *u) {
     struct termios oflags, nflags;
 
     system("clear");
-    printf("\n\n\n\t\t\t\t   Bank Management System: registration\n");
+    printf("\n\n\n\t\t\t\t      Bank Management System\n");
+    printf("\n\n\n\t\t\t\t   ======= registration =======\n");
     printf("\n\t\t\t\t\t User Login: ");
-    scanf("%s", u->name);
+    fgets(u->name, sizeof(u->name), stdin);
+    u->name[strcspn(u->name, "\n")] = 0;
 
-    // disabling echo
+
     tcgetattr(fileno(stdin), &oflags);
     nflags = oflags;
     nflags.c_lflag &= ~ECHO;
@@ -55,9 +56,9 @@ int registration(sqlite3 *db, struct User *u) {
         exit(1);
     }
     printf("\n\t\t\t\t\t Enter the password: ");
-    scanf("%s", u->password);
+    fgets(u->password, sizeof(u->password), stdin);
+    u->password[strcspn(u->password, "\n")] = 0;
 
-    // restore terminal
     if (tcsetattr(fileno(stdin), TCSANOW, &oflags) != 0)
     {
         perror("tcsetattr");

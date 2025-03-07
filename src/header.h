@@ -93,5 +93,6 @@ int plen(char **spl, const char *s, char c);
 int clear(char **spl, int p);
 char **split(char const *s, char c);
 char *substr(char const *s, unsigned int start, size_t len);
+void scanInt(int *result);
 
 #endif

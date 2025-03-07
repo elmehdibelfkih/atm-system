@@ -21,10 +21,11 @@ int isAccountExist(struct User *u, sqlite3 *db, int accountId)
 void success(struct User *u, sqlite3 *db)
 {
     int option;
+    system("clear");
     printf("\n✔ Success!\n\n");
 invalid:
     printf("Enter 1 to go to the main menu and 0 to exit!\n");
-    scanf("%d", &option);
+    scanInt(&option);
     system("clear");
     if (option == 1)
     {
@@ -53,10 +54,9 @@ void scanAccountNumber(struct Record *r, struct User *u, sqlite3 *db)
     char *endptr;
     long num;
 
-    // while (getchar() != '\n')
-    //     ;
     while (1)
     {
+        system("clear");
         printf("\nEnter the account number: ");
         if (!fgets(input, sizeof(input), stdin))
         {
@@ -70,7 +70,7 @@ void scanAccountNumber(struct Record *r, struct User *u, sqlite3 *db)
             start++;
         if (*start == '\0')
         {
-            printf("1❌ Invalid input! Please enter a valid account number.");
+            printf("❌ Invalid input! Please enter a valid account number.");
             continue;
         }
         num = strtol(start, &endptr, 10);
@@ -106,11 +106,9 @@ void scanPhoneNumber(struct Record *r)
     char *endptr;
     long num;
 
-    // while (getchar() != '\n')
-    //     ;
-
     while (1)
     {
+        system("clear");
         printf("\nEnter the phone number:");
         if (!fgets(input, sizeof(input), stdin))
         {
@@ -124,7 +122,7 @@ void scanPhoneNumber(struct Record *r)
             start++;
         if (*start == '\0')
         {
-            printf("1❌ Invalid input! Please enter a valid account number.");
+            printf("❌ Invalid input! Please enter a valid account number.");
             continue;
         }
         num = strtol(start, &endptr, 10);
@@ -154,10 +152,9 @@ void scanDeposit(struct Record *r)
     char *endptr;
     double num;
 
-    while (getchar() != '\n')
-        ;
     while (1)
     {
+        system("clear");
         printf("\nEnter amount to deposit: $");
 
         if (!fgets(input, sizeof(input), stdin))
@@ -201,13 +198,11 @@ void scanDate(struct Record *r)
 {
     char input[20];
     int month, day, year;
-    int daysInMonth[] = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}; // Days in each month
-
-    while (getchar() != '\n')
-        ;
+    int daysInMonth[] = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
     while (1)
     {
+        system("clear");
         printf("\nEnter today's date(mm/dd/yyyy):");
 
         if (!fgets(input, sizeof(input), stdin))
@@ -251,14 +246,18 @@ void scanDate(struct Record *r)
 
 void scanCountry(struct Record *r)
 {
+    system("clear");
     printf("\nEnter the country:");
-    scanf("%s", r->country);
+    fgets(r->country, sizeof(r->country), stdin);
+    r->country[strcspn(r->country, "\n")] = 0;
     while (!isCountryValid(r->country))
     {
-        printf("\n❌ Invalid country! Enter a valid country.");
-        printf("\n the country must be lowercase.\n");
-        printf("\nEnter the country:");
-        scanf("%s", r->country);
+        system("clear");
+        printf("❌ Invalid country! Enter a valid country.\n");
+        printf("the country must be lowercase.\n");
+        printf("Enter the country:");
+        fgets(r->country, sizeof(r->country), stdin);
+        r->country[strcspn(r->country, "\n")] = 0;
     }
 }
 
@@ -309,14 +308,18 @@ int isCountryValid(const char *name)
 
 void scanAccountType(struct Record *r)
 {
+    system("clear");
     printf("\nChoose the type of account:\n\t-> saving\n\t-> current\n\t-> fixed01(for 1 year)\n\t-> fixed02(for 2 years)\n\t-> fixed03(for 3 years)\n\n\tEnter your choice:");
-    scanf("%s", r->accountType);
+    fgets(r->accountType, sizeof(r->accountType), stdin);
+    r->accountType[strcspn(r->accountType, "\n")] = 0;
     while (!isAccountTypeVlid(r->accountType))
     {
-        printf("\n❌ Invalid account type! Enter a valid account type.");
-        printf("\n the account type must be lowercase.");
-        printf("\nChoose the type of account:\n\t-> saving\n\t-> current\n\t-> fixed01(for 1 year)\n\t-> fixed02(for 2 years)\n\t-> fixed03(for 3 years)\n\n\tEnter your choice:");
-        scanf("%s", r->accountType);
+        system("clear");
+        printf("❌ Invalid account type! Enter a valid account type.\n");
+        printf("the account type must be lowercase.\n");
+        printf("Choose the type of account:\n\t-> saving\n\t-> current\n\t-> fixed01(for 1 year)\n\t-> fixed02(for 2 years)\n\t-> fixed03(for 3 years)\n\n\tEnter your choice:");
+        fgets(r->accountType, sizeof(r->accountType), stdin);
+        r->accountType[strcspn(r->accountType, "\n")] = 0;
     }
 }
 
@@ -325,8 +328,7 @@ int isAccountTypeVlid(const char *type)
     const size_t typesCount = 5;
 
     const char *types[] = {
-        "saving", "current", "fixed01", "fixed02", "fixed03"
-    };
+        "saving", "current", "fixed01", "fixed02", "fixed03"};
 
     for (size_t i = 0; i < typesCount; i++)
     {

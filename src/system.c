@@ -1,6 +1,6 @@
 #include "header.h"
 
-void createNewAcc(struct User *u, sqlite3 *db) // creat new account to an exist user
+void createNewAcc(struct User *u, sqlite3 *db)
 {
     struct Record r;
     int err = 0;
