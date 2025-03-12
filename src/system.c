@@ -81,9 +81,6 @@ void updateAccount(struct User *u, sqlite3 *db)
 
 void checkAllAccounts(struct User *u, sqlite3 *db)
 {
-    // char userName[100];
-    // struct Record r;
-
     system("clear");
     printf("\t\t====== All accounts from user, %s =====\n\n", u->name);
     // while (getAccountFromFile(pf, userName, &r))
