@@ -1,9 +1,11 @@
 #include "header.h"
 
-void success(struct User *u, sqlite3 *db)
+void success(struct User *u, sqlite3 *db, int clear)
 {
     int option;
-    system("clear");
+    if (clear) {
+        system("clear");
+    }
     printf("\n✔ Success!\n\n");
 invalid:
     printf("Enter 1 to go to the main menu and 0 to exit!\n");
@@ -29,7 +31,8 @@ void failure(struct User *u, sqlite3 *db, int printErr)
     int option;
     system("clear");
     printf("\n✔ failure!\n\n");
-    if (printErr) {
+    if (printErr)
+    {
         printf("%s", my_error.error_message);
     }
 invalid:
@@ -49,13 +52,6 @@ invalid:
         printf("Insert a valid operation!\n");
         goto invalid;
     }
-}
-
-
-int isAccDataValide(struct Record r)
-{
-    (void)r;
-    return 0;
 }
 
 int scanAccountNumber(struct Record *r, struct User *u, sqlite3 *db)
@@ -102,7 +98,8 @@ int scanAccountNumber(struct Record *r, struct User *u, sqlite3 *db)
         }
         r->accountId = (int)num;
         ret = isAccountExist(u, db, r->accountId);
-        if (ret == -1) {
+        if (ret == -1)
+        {
             return -1;
         }
         if (ret)
@@ -123,7 +120,7 @@ void scanPhoneNumber(struct Record *r)
     {
         system("clear");
         printf("\nEnter the phone number: ");
-        
+
         if (!fgets(input, sizeof(input), stdin))
         {
             printf("%s", ERROR_READING);
@@ -158,7 +155,6 @@ void scanPhoneNumber(struct Record *r)
     retry:;
     }
 }
-
 
 void scanDeposit(struct Record *r)
 {
@@ -203,11 +199,6 @@ void scanDeposit(struct Record *r)
         r->amount = num;
         break;
     }
-}
-
-int isLeapYear(int year)
-{
-    return (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
 }
 
 void scanDate(struct Record *r)
@@ -276,51 +267,6 @@ void scanCountry(struct Record *r)
     }
 }
 
-int isCountryValid(const char *name)
-{
-    const char *countries[] = {
-        "afghanistan", "albania", "algeria", "andorra", "angola", "antigua and barbuda",
-        "argentina", "armenia", "australia", "austria", "azerbaijan", "bahamas", "bahrain",
-        "bangladesh", "barbados", "belarus", "belgium", "belize", "benin", "bhutan", "bolivia",
-        "bosnia and herzegovina", "botswana", "brazil", "brunei", "bulgaria", "burkina faso",
-        "burundi", "cabo verde", "cambodia", "cameroon", "canada", "central african republic",
-        "chad", "chile", "china", "colombia", "comoros", "congo", "costa rica", "croatia",
-        "cuba", "cyprus", "czech republic", "democratic republic of the congo", "denmark",
-        "djibouti", "dominica", "dominican republic", "ecuador", "egypt", "el salvador",
-        "equatorial guinea", "eritrea", "estonia", "eswatini", "ethiopia", "fiji", "finland",
-        "france", "gabon", "gambia", "georgia", "germany", "ghana", "greece", "grenada",
-        "guatemala", "guinea", "guinea-bissau", "guyana", "haiti", "honduras", "hungary",
-        "iceland", "india", "indonesia", "iran", "iraq", "ireland", "israel", "italy",
-        "ivory coast", "jamaica", "japan", "jordan", "kazakhstan", "kenya", "kiribati",
-        "kuwait", "kyrgyzstan", "laos", "latvia", "lebanon", "lesotho", "liberia", "libya",
-        "liechtenstein", "lithuania", "luxembourg", "madagascar", "malawi", "malaysia",
-        "maldives", "mali", "malta", "marshall islands", "mauritania", "mauritius",
-        "mexico", "micronesia", "moldova", "monaco", "mongolia", "montenegro", "morocco",
-        "mozambique", "myanmar", "namibia", "nauru", "nepal", "netherlands", "new zealand",
-        "nicaragua", "niger", "nigeria", "north korea", "north macedonia", "norway",
-        "oman", "pakistan", "palau", "palestine", "panama", "papua new guinea", "paraguay",
-        "peru", "philippines", "poland", "portugal", "qatar", "romania", "russia", "rwanda",
-        "saint kitts and nevis", "saint lucia", "saint vincent and the grenadines", "samoa",
-        "san marino", "sao tome and principe", "saudi arabia", "senegal", "serbia", "seychelles",
-        "sierra leone", "singapore", "slovakia", "slovenia", "solomon islands", "somalia",
-        "south africa", "south korea", "south sudan", "spain", "sri lanka", "sudan", "suriname",
-        "sweden", "switzerland", "syria", "taiwan", "tajikistan", "tanzania", "thailand",
-        "timor-leste", "togo", "tonga", "trinidad and tobago", "tunisia", "turkey", "turkmenistan",
-        "tuvalu", "uganda", "ukraine", "united arab emirates", "united kingdom", "united states",
-        "uruguay", "uzbekistan", "vanuatu", "vatican city", "venezuela", "vietnam",
-        "yemen", "zambia", "zimbabwe"};
-    const size_t countries_count = 196;
-
-    for (size_t i = 0; i < countries_count; i++)
-    {
-        if (strcmp(countries[i], name) == 0)
-        {
-            return 1;
-        }
-    }
-    return 0;
-}
-
 void scanAccountType(struct Record *r)
 {
     system("clear");
@@ -352,4 +298,15 @@ int isAccountTypeVlid(const char *type)
         }
     }
     return 0;
+}
+
+void printAccountInfo(struct Record r)
+{
+    printf("\nAccount ID: %d\nDeposit Date: %s \ncountry: %s \nPhone number: %s \nAmount deposited: $ %.2f \nType Of Account: %s\n\n",
+           r.accountId,
+           r.date,
+           r.country,
+           r.phone,
+           r.amount,
+           r.accountType);
 }

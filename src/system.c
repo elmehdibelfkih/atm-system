@@ -21,7 +21,7 @@ void createNewAcc(struct User *u, sqlite3 *db)
     strcpy(r.name, u->name);
     r.userId = getId(u, db, &err);
     addRecord(r, db);
-    success(u, db);
+    success(u, db, 1);
 }
 
 void updateAccount(struct User *u, sqlite3 *db)
@@ -38,7 +38,8 @@ void updateAccount(struct User *u, sqlite3 *db)
                "\t\tEnsure the ID is correct and exists in the system.\n");
         printf("\t\tTo view all available accounts, return to the main menu by entering -1.\n");
         scanInt(&accountId, "Account ID: ", -1, INT_MAX);
-        if (accountId == -1) {
+        if (accountId == -1)
+        {
             mainMenu(u, db);
         }
         tmp = isAccountExist(u, db, accountId);
@@ -63,7 +64,7 @@ void updateAccount(struct User *u, sqlite3 *db)
                 {
                     failure(u, db, 1);
                 }
-                success(u, db);
+                success(u, db, 1);
             }
             else if (option == 2)
             {
@@ -72,7 +73,7 @@ void updateAccount(struct User *u, sqlite3 *db)
                 {
                     failure(u, db, 1);
                 }
-                success(u, db);
+                success(u, db, 1);
             }
         }
         break;
@@ -81,25 +82,32 @@ void updateAccount(struct User *u, sqlite3 *db)
 
 void checkAllAccounts(struct User *u, sqlite3 *db)
 {
-    system("clear");
+    sqlite3_stmt *stmt;
+    int rc;
+    struct Record r;
+
+    rc = sqlite3_prepare_v2(db, SQLITE_SELECT_ACCOUNTS, -1, &stmt, NULL);
+    if (rc != SQLITE_OK)
+    {
+        my_error.error_message = DATABASE_ERROR;
+        failure(u, db, 1);
+    }
+    sqlite3_bind_text(stmt, 1, u->name, -1, SQLITE_STATIC);
     printf("\t\t====== All accounts from user, %s =====\n\n", u->name);
-    // while (getAccountFromFile(pf, userName, &r))
-    // {
-    //     if (strcmp(userName, u.name) == 0)
-    //     {
-    //         printf("_____________________\n");
-    //         printf("\nAccount number:%d\nDeposit Date:%d/%d/%d \ncountry:%s \nPhone number:%d \nAmount deposited: $%.2f \nType Of Account:%s\n",
-    //                r.accountId,
-    //                r.deposit.day,
-    //                r.deposit.month,
-    //                r.deposit.year,
-    //                r.country,
-    //                r.phone,
-    //                r.amount,
-    //                r.accountType);
-    //     }
-    // }
-    success(u, db);
+    system("clear");
+    while (sqlite3_step(stmt) == SQLITE_ROW)
+    {
+        printf("=========================================\n");
+        r.accountId = sqlite3_column_int(stmt, 3);
+        strcpy(r.date, (char *)sqlite3_column_text(stmt, 4));
+        strcpy(r.country, (char *)sqlite3_column_text(stmt, 5));
+        strcpy(r.phone, (char *)sqlite3_column_text(stmt, 6));
+        r.amount = sqlite3_column_double(stmt, 7);
+        strcpy(r.accountType, (char *)sqlite3_column_text(stmt, 8));
+        printAccountInfo(r);
+        printf("=========================================\n");
+    }
+    success(u, db, 0);
 }
 
 void checkExistingAccounts(struct User *u, sqlite3 *db)

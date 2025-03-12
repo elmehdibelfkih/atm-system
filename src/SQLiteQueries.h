@@ -17,7 +17,7 @@
                              "accountId INTEGER NOT NULL, "           \
                              "date DATE NOT NULL, "                   \
                              "country TEXT NOT NULL, "                \
-                             "phone TEXT NOT NULL, "               \
+                             "phone TEXT NOT NULL, "                  \
                              "balance REAL NOT NULL, "                \
                              "type_of_account TEXT NOT NULL);"
 
@@ -31,5 +31,7 @@ country, phone, balance, type_of_account) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
 #define SQLITE_UPDATE_PHONE "UPDATE records SET phone = ? WHERE accountId = ? AND name = ?"
 
 #define SQLITE_UPDATE_COUNTRY "UPDATE records SET country = ? WHERE accountId = ? AND name = ?"
+
+#define SQLITE_SELECT_ACCOUNTS "SELECT * FROM records WHERE name = ?"
 
 #endif

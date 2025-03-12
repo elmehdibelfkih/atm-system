@@ -135,7 +135,8 @@ int getId(struct User *u, sqlite3 *db, int *err) // FIXME: set the custom errno
 
     if (sqlite3_prepare_v2(db, SQLITE_GET_ID, -1, &stmt, NULL) != SQLITE_OK)
     {
-        exit(1); // FIXME: avoid using exit
+        my_error.error_message = DATABASE_ERROR;
+        failure(u, db, 1);
     }
 
     sqlite3_bind_text(stmt, 1, u->name, -1, SQLITE_STATIC);

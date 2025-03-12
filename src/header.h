@@ -99,8 +99,7 @@ int updatePhone(struct User *u, sqlite3 *db, int accountId);
 
 // helpers
 int isAccountExist(struct User *u, sqlite3 *db, int accountId);
-int isAccDataValide(struct Record r);
-void success(struct User *u, sqlite3 *db);
+void success(struct User *u, sqlite3 *db, int clear);
 void failure(struct User *u, sqlite3 *db, int printErr);
 int scanAccountNumber(struct Record *r, struct User *u, sqlite3 *db);
 void scanPhoneNumber(struct Record *r);
@@ -111,6 +110,7 @@ void scanCountry(struct Record *r);
 void scanAccountType(struct Record *r);
 int isCountryValid(const char *name);
 int isAccountTypeVlid(const char *type);
+void printAccountInfo(struct Record r);
 
 // tools
 int n_of_world(char const *s, char c);
