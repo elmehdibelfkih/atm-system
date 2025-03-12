@@ -64,30 +64,68 @@ int addUser(char *name, char *passWord, sqlite3 *db)
     return 1;
 }
 
-// return 1 if an error happen
-// return 0 if every thing is ok
-// return -1 if the user dose not exist in th data base
-int getPassword(struct User *u, sqlite3 *db, char password[50])
+void addRecord(struct Record r, sqlite3 *db)
 {
     sqlite3_stmt *stmt;
 
-    if (sqlite3_prepare_v2(db, SQLITE_GET_PASSWORD, -1, &stmt, NULL) != SQLITE_OK)
+    if (sqlite3_prepare_v2(db, SQLITE_ADD_RECCORD, -1, &stmt, NULL) != SQLITE_OK)
+    {
+        fprintf(stderr, "SQL Error: %s\n", sqlite3_errmsg(db));
+        return;
+    }
+
+    sqlite3_bind_int(stmt, 1, r.userId);
+    sqlite3_bind_text(stmt, 2, r.name, -1, SQLITE_STATIC);
+    sqlite3_bind_int(stmt, 3, r.accountId);
+    sqlite3_bind_text(stmt, 4, r.date, -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 5, r.country, -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 6, r.phone, -1, SQLITE_STATIC); // FIXME:
+    sqlite3_bind_double(stmt, 7, r.amount);
+    sqlite3_bind_text(stmt, 8, r.accountType, -1, SQLITE_STATIC);
+
+    if (sqlite3_step(stmt) != SQLITE_DONE)
+    {
+        fprintf(stderr, "SQL Execution Error: %s\n", sqlite3_errmsg(db));
+        exit(1);
+    }
+
+    sqlite3_finalize(stmt);
+}
+
+// return -1 if an error happen
+// return 0 if every thing is ok
+// return 1 if the user dose not exist in th data base
+int getPassword(struct User *u, sqlite3 *db, char password[PASSWORD_LENGHT])
+{
+    sqlite3_stmt *stmt;
+    int rc;
+
+    rc = sqlite3_prepare_v2(db, SQLITE_GET_PASSWORD, -1, &stmt, NULL);
+    if (rc != SQLITE_OK)
     {
         my_error.error_message = DATABASE_ERROR;
-        return 1;
+        return -1;
     }
-    sqlite3_bind_text(stmt, 1, u->name, -1, SQLITE_STATIC);
-    if (sqlite3_step(stmt) == SQLITE_ROW)
+    sqlite3_bind_text(stmt, 1, u->name, -1, SQLITE_TRANSIENT);
+    rc = sqlite3_step(stmt);
+    if (rc == SQLITE_ROW)
     {
-        strcpy(password, (char *)sqlite3_column_text(stmt, 0));
+        strncpy(password, (const char *)sqlite3_column_text(stmt, 0), PASSWORD_LENGHT - 1);
+        password[PASSWORD_LENGHT - 1] = '\0';
+        sqlite3_finalize(stmt);
+        return 0;
+    }
+    else if (rc == SQLITE_DONE)
+    {
+        sqlite3_finalize(stmt);
+        return 1;
     }
     else
     {
+        my_error.error_message = DATABASE_ERROR;
         sqlite3_finalize(stmt);
         return -1;
     }
-    sqlite3_finalize(stmt);
-    return 0;
 }
 
 int getId(struct User *u, sqlite3 *db, int *err) // FIXME: set the custom errno
@@ -115,30 +153,93 @@ int getId(struct User *u, sqlite3 *db, int *err) // FIXME: set the custom errno
     return id;
 }
 
-void addRecord(struct Record r, sqlite3 *db)
+// return 0 if the account does not exist
+// return -1 if an error happen
+// return 1 if the account exist
+int isAccountExist(struct User *u, sqlite3 *db, int accountId)
 {
     sqlite3_stmt *stmt;
+    int rc;
 
-    if (sqlite3_prepare_v2(db, SQLITE_ADD_RECCORD, -1, &stmt, NULL) != SQLITE_OK)
+    rc = sqlite3_prepare_v2(db, SQLITE_SELECT_ID, -1, &stmt, NULL);
+
+    if (rc != SQLITE_OK)
     {
-        fprintf(stderr, "SQL Error: %s\n", sqlite3_errmsg(db));
-        return;
+        my_error.error_message = DATABASE_ERROR;
+        return -1;
+    }
+    sqlite3_bind_text(stmt, 1, u->name, -1, NULL);
+    sqlite3_bind_int(stmt, 2, accountId);
+    rc = sqlite3_step(stmt);
+    if (rc == SQLITE_ROW)
+    {
+        sqlite3_finalize(stmt);
+        return 1;
+    }
+    else if (rc == SQLITE_DONE)
+    {
+        sqlite3_finalize(stmt);
+        return 0;
+    }
+    sqlite3_finalize(stmt);
+    my_error.error_message = DATABASE_ERROR;
+    return -1;
+}
+
+// return -1 if an error happen
+// return 1 if every thing is ok
+int updateCountry(struct User *u, sqlite3 *db, int accountId)
+{
+    struct Record r;
+
+    scanCountry(&r);
+    sqlite3_stmt *stmt;
+
+    if (sqlite3_prepare_v2(db, SQLITE_UPDATE_COUNTRY, -1, &stmt, NULL) != SQLITE_OK)
+    {
+        my_error.error_message = DATABASE_ERROR;
+        return -1;
     }
 
-    sqlite3_bind_int(stmt, 1, r.userId);
-    sqlite3_bind_text(stmt, 2, r.name, -1, SQLITE_STATIC);
-    sqlite3_bind_int(stmt, 3, r.accountId);
-    sqlite3_bind_text(stmt, 4, r.date, -1, SQLITE_STATIC);
-    sqlite3_bind_text(stmt, 5, r.country, -1, SQLITE_STATIC);
-    sqlite3_bind_int(stmt, 6, r.phone); // FIXME:
-    sqlite3_bind_double(stmt, 7, r.amount);
-    sqlite3_bind_text(stmt, 8, r.accountType, -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 1, r.country, -1, SQLITE_STATIC);
+    sqlite3_bind_int(stmt, 2, accountId);
+    sqlite3_bind_text(stmt, 3, u->name, -1, SQLITE_STATIC);
 
     if (sqlite3_step(stmt) != SQLITE_DONE)
     {
-        fprintf(stderr, "SQL Execution Error: %s\n", sqlite3_errmsg(db));
-        exit(1);
+        my_error.error_message = DATABASE_ERROR;
+        sqlite3_finalize(stmt);
+        return -1;
     }
 
     sqlite3_finalize(stmt);
+    return 1;
+}
+
+int updatePhone(struct User *u, sqlite3 *db, int accountId)
+{
+    struct Record r;
+
+    scanPhoneNumber(&r);
+    sqlite3_stmt *stmt;
+
+    if (sqlite3_prepare_v2(db, SQLITE_UPDATE_COUNTRY, -1, &stmt, NULL) != SQLITE_OK)
+    {
+        my_error.error_message = DATABASE_ERROR;
+        return -1;
+    }
+
+    sqlite3_bind_text(stmt, 1, r.phone, -1, SQLITE_STATIC);
+    sqlite3_bind_int(stmt, 2, accountId);
+    sqlite3_bind_text(stmt, 3, u->name, -1, SQLITE_STATIC);
+
+    if (sqlite3_step(stmt) != SQLITE_DONE)
+    {
+        my_error.error_message = DATABASE_ERROR;
+        sqlite3_finalize(stmt);
+        return -1;
+    }
+
+    sqlite3_finalize(stmt);
+    return 1;
 }

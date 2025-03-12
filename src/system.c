@@ -9,7 +9,11 @@ void createNewAcc(struct User *u, sqlite3 *db)
     printf("\t\t\t===== New record =====\n");
 
     scanDate(&r);
-    scanAccountNumber(&r, u, db);
+    if (scanAccountNumber(&r, u, db) == -1)
+    {
+        printf("%s", my_error.error_message);
+        failure(u, db, 1);
+    }
     scanPhoneNumber(&r);
     scanCountry(&r);
     scanDeposit(&r);
@@ -20,14 +24,60 @@ void createNewAcc(struct User *u, sqlite3 *db)
     success(u, db);
 }
 
-void updateAccount(struct User *u, sqlite3 *db){
-    (void)u;
-    (void)db;
+void updateAccount(struct User *u, sqlite3 *db)
+{
+    int accountId;
+    int option;
+    int tmp;
+    int ret;
 
-    printf("Please enter the Account ID you wish to modify or update. Ensure the ID is correct and exists in the system.\n");
-    printf("account ID: ");
+    system("clear");
+    while (1)
+    {
+        printf("\n\n\t\tPlease enter the Account ID you wish to modify or update.\n"
+               "\t\tEnsure the ID is correct and exists in the system.\n");
+        printf("\t\tTo view all available accounts, return to the main menu by entering -1.\n");
+        scanInt(&accountId, "Account ID: ", -1, INT_MAX);
+        if (accountId == -1) {
+            mainMenu(u, db);
+        }
+        tmp = isAccountExist(u, db, accountId);
+        if (tmp == -1)
+        {
+            failure(u, db, 1);
+        }
+        else if (!tmp)
+        {
+            system("clear");
+            printf("\t\tAccount ID does not exist. Please enter a valid account.\n");
+            continue;
+        }
+        else
+        {
+            printf("\t\tEnter 1 to update the country or 2 to update the phone number.\n");
+            scanInt(&option, "option: ", 1, 2);
+            if (option == 1)
+            {
+                ret = updateCountry(u, db, accountId);
+                if (ret == -1)
+                {
+                    failure(u, db, 1);
+                }
+                success(u, db);
+            }
+            else if (option == 2)
+            {
+                ret = updatePhone(u, db, accountId);
+                if (ret == -1)
+                {
+                    failure(u, db, 1);
+                }
+                success(u, db);
+            }
+        }
+        break;
+    }
 }
-
 
 void checkAllAccounts(struct User *u, sqlite3 *db)
 {
@@ -53,4 +103,28 @@ void checkAllAccounts(struct User *u, sqlite3 *db)
     //     }
     // }
     success(u, db);
+}
+
+void checkExistingAccounts(struct User *u, sqlite3 *db)
+{
+    (void)u;
+    (void)db;
+}
+
+void makeTransaction(struct User *u, sqlite3 *db)
+{
+    (void)u;
+    (void)db;
+}
+
+void removeExistingAccount(struct User *u, sqlite3 *db)
+{
+    (void)u;
+    (void)db;
+}
+
+void transferAccount(struct User *u, sqlite3 *db)
+{
+    (void)u;
+    (void)db;
 }

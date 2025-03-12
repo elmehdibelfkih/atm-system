@@ -94,24 +94,24 @@ char *substr(char const *s, unsigned int start, size_t len)
 	return (s1);
 }
 
-void scanInt(int *result)
+void scanInt(int *result, char *prefix, int start, int end)
 {
 	char input[256];
 	char *endptr;
 
 	while (1)
 	{
-		printf("\n\t\tEnter an option: ");
+		printf("\t\t%s", prefix);
 
 		if (!fgets(input, sizeof(input), stdin))
 		{
-			printf("Insert a valid operation!\n");
+			printf("\t\tInsert a valid input!\n");
 			continue;
 		}
 		input[strcspn(input, "\n")] = 0;
-		if (*input == '\0' || strspn(input, "0123456789") != strlen(input))
+		if (*input == '\0' || strspn(input, "-0123456789") != strlen(input))
 		{
-			printf("Insert a valid operation!\n");
+			printf("\t\tInsert a valid input!\n");
 			continue;
 		}
 		errno = 0;
@@ -119,7 +119,11 @@ void scanInt(int *result)
 		if (((num == LLONG_MAX || num == LLONG_MIN) && errno == ERANGE) ||
 			*endptr != '\0' || num > INT_MAX || num < INT_MIN)
 		{
-			printf("Insert a valid operation!\n");
+			printf("\t\tInsert a valid input!\n");
+			continue;
+		}
+		if (num < start || num > end) {
+			printf("\t\tInsert a valid input!\n");
 			continue;
 		}
 		*result = (int)num;

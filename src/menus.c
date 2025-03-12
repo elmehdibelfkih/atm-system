@@ -5,17 +5,11 @@ void mainMenu(struct User *u, sqlite3 *db)
     int option;
 
     system("clear");
-    printf("\n\n\t\t======= ATM =======\n\n");
-    printf("\n\t\t-->> welcome %s <<--\n", u->name);
-    printf("\n\t\t[1]- Create a new account\n");
-    printf("\n\t\t[2]- Update account information\n");
-    printf("\n\t\t[3]- Check accounts\n");
-    printf("\n\t\t[4]- Check list of owned account\n");
-    printf("\n\t\t[5]- Make Transaction\n");
-    printf("\n\t\t[6]- Remove existing account\n");
-    printf("\n\t\t[7]- Transfer ownership\n");
-    printf("\n\t\t[8]- Exit\n");
-    scanInt(&option);
+    printf("\n\t\t-->> welcome %s <<--\n\n", u->name);
+    printf(MAIN_MENU);
+    // scanInt(&option);
+    scanInt(&option, "option: ", 1, 8);
+
     switch (option)
     {
     case 1:
@@ -45,7 +39,6 @@ void mainMenu(struct User *u, sqlite3 *db)
         // transferAccount(u, db);
         break;
     case 8:
-
         initMenu(u, db);
         break;
     default:
@@ -57,29 +50,26 @@ void initMenu(struct User *u, sqlite3 *db)
 {
     int r = 0;
     int option;
-    char tmpPass[50];
+    char tmpPass[PASSWORD_LENGHT];
     int ret = 0;
     system("clear");
     while (!r)
     {
-        printf("\n\n\t\t======= ATM =======\n");
-        printf("\n\t\t-->> Feel free to login / register :\n");
-        printf("\n\t\t[1]- login\n");
-        printf("\n\t\t[2]- register\n");
-        printf("\n\t\t[3]- exit\n");
-        scanInt(&option);
+        printf(INIT_MENU);
+        // scanInt(&option);
+        scanInt(&option, "option: ", 1, 3);
         switch (option)
         {
         case 1:
             loginMenu(u->name, u->password);
             ret = getPassword(u, db, tmpPass);
-            if (ret == 1)
+            if (ret == -1)
             {
                 system("clear");
                 printf("%s\n", my_error.error_message);
                 continue;
             }
-            if (ret == -1 || strcmp(u->password, tmpPass) != 0)
+            if (ret == 1 || strcmp(u->password, tmpPass) != 0)
             {
                 system("clear");
                 printf(LOGIN_FATAL);

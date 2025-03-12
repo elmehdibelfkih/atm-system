@@ -17,12 +17,19 @@
                              "accountId INTEGER NOT NULL, "           \
                              "date DATE NOT NULL, "                   \
                              "country TEXT NOT NULL, "                \
-                             "phone NUMERIC NOT NULL, "               \
+                             "phone TEXT NOT NULL, "               \
                              "balance REAL NOT NULL, "                \
                              "type_of_account TEXT NOT NULL);"
+
 #define SQLITE_ADD_RECCORD "INSERT INTO records (user_id, name, accountId, date, \
 country, phone, balance, type_of_account) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
 
 #define SQLITE_ADD_USER "INSERT INTO users (name, password) VALUES (?, ?);"
+
+#define SQLITE_SELECT_ID "SELECT * FROM records WHERE name = ? AND accountId = ?"
+
+#define SQLITE_UPDATE_PHONE "UPDATE records SET phone = ? WHERE accountId = ? AND name = ?"
+
+#define SQLITE_UPDATE_COUNTRY "UPDATE records SET country = ? WHERE accountId = ? AND name = ?"
 
 #endif

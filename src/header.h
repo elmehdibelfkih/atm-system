@@ -14,10 +14,32 @@
 #include "errors.h"
 #include "SQLiteQueries.h"
 
+#define INIT_MENU "\n\n\t\t======= ATM =======\n\n\t\t\
+-->> Feel free to login / register :\n\n\t\t\
+[1]- login\n\n\t\t\
+[2]- register\n\n\t\t\
+[3]- exit\n\n"
+
+#define MAIN_MENU "\n\n\t\t======= ATM =======\n\n\n\t\t\
+[1]- Create a new account\n\n\t\t\
+[2]- Update account information\n\n\t\t\
+[3]- Check accounts\n\n\t\t\
+[4]- Check list of owned account\n\n\t\t\
+[5]- Make Transaction\n\n\t\t\
+[6]- Remove existing account\n\n\t\t\
+[7]- Transfer ownership\n\n\t\t\
+[8]- Exit\n\n"
+
+#define NAME_LENGHT 50
+#define PASSWORD_LENGHT 50
+#define PHONE_LENGHT 20
+#define ACCOUNT_TYPE_LENGHT 10
+#define DATE_LENGHT 11
 
 
-typedef struct {
-    char* error_message;
+typedef struct
+{
+    char *error_message;
 } MyError;
 
 extern MyError my_error;
@@ -29,15 +51,15 @@ struct Date
 
 struct Record
 {
-    char name[50];
-    char country[50];
-    char accountType[10];
+    char name[NAME_LENGHT];
+    char country[PASSWORD_LENGHT];
+    char accountType[ACCOUNT_TYPE_LENGHT];
     int id;
-    int phone;
+    char phone[PHONE_LENGHT];
     int userId;
     int accountId;
     double amount;
-    char date[11];
+    char date[DATE_LENGHT];
     struct Date deposit;
     struct Date withdraw;
 };
@@ -45,14 +67,14 @@ struct Record
 struct User
 {
     int id;
-    char name[50];
-    char password[50];
+    char name[NAME_LENGHT];
+    char password[PASSWORD_LENGHT];
 };
 
 // authentication functions
-void loginMenu(char a[50], char pass[50]);
+void loginMenu(char a[NAME_LENGHT], char pass[PASSWORD_LENGHT]);
 int registration(sqlite3 *db, struct User *u);
-int getPassword(struct User *u, sqlite3 *db, char password[50]);
+int getPassword(struct User *u, sqlite3 *db, char password[PASSWORD_LENGHT]);
 int getId(struct User *u, sqlite3 *db, int *err);
 
 // mainMenu function
@@ -72,12 +94,15 @@ void initMenu(struct User *u, sqlite3 *db);
 void intiDataBase(sqlite3 **db);
 int addUser(char *name, char *passWord, sqlite3 *db);
 void addRecord(struct Record r, sqlite3 *db);
+int updateCountry(struct User *u, sqlite3 *db, int accountId);
+int updatePhone(struct User *u, sqlite3 *db, int accountId);
 
 // helpers
 int isAccountExist(struct User *u, sqlite3 *db, int accountId);
 int isAccDataValide(struct Record r);
 void success(struct User *u, sqlite3 *db);
-void scanAccountNumber(struct Record *r, struct User *u, sqlite3 *db);
+void failure(struct User *u, sqlite3 *db, int printErr);
+int scanAccountNumber(struct Record *r, struct User *u, sqlite3 *db);
 void scanPhoneNumber(struct Record *r);
 void scanDeposit(struct Record *r);
 void scanDate(struct Record *r);
@@ -93,6 +118,6 @@ int plen(char **spl, const char *s, char c);
 int clear(char **spl, int p);
 char **split(char const *s, char c);
 char *substr(char const *s, unsigned int start, size_t len);
-void scanInt(int *result);
+void scanInt(int *result, char *prefix, int start, int end);
 
 #endif

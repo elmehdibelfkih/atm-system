@@ -1,23 +1,5 @@
 #include "header.h"
 
-int isAccountExist(struct User *u, sqlite3 *db, int accountId)
-{
-    // struct Record cr; // tmp to store data from the record file
-    // char *sql = "SELECT * FROM records WHERE name = '?' AND accountId = '?'";
-    // sqlite3_stmt *stmt;
-
-    // if (sqlite3_prepare_v2(db, sql, -1, &stmt, NULL) != SQLITE_OK)
-    // {
-    //     exit(1); // FIXME: avoid using exit
-    // }
-
-    // (void)cr;
-    (void)u;
-    (void)db;
-    (void)accountId;
-    return 0;
-}
-
 void success(struct User *u, sqlite3 *db)
 {
     int option;
@@ -25,7 +7,7 @@ void success(struct User *u, sqlite3 *db)
     printf("\n✔ Success!\n\n");
 invalid:
     printf("Enter 1 to go to the main menu and 0 to exit!\n");
-    scanInt(&option);
+    scanInt(&option, "option: ", 0, 1);
     system("clear");
     if (option == 1)
     {
@@ -33,7 +15,7 @@ invalid:
     }
     else if (option == 0)
     {
-        exit(1);
+        initMenu(u, db);
     }
     else
     {
@@ -42,17 +24,46 @@ invalid:
     }
 }
 
+void failure(struct User *u, sqlite3 *db, int printErr)
+{
+    int option;
+    system("clear");
+    printf("\n✔ failure!\n\n");
+    if (printErr) {
+        printf("%s", my_error.error_message);
+    }
+invalid:
+    printf("Enter 1 to go to the main menu and 0 to exit!\n");
+    scanInt(&option, "option: ", 0, 1);
+    system("clear");
+    if (option == 1)
+    {
+        mainMenu(u, db);
+    }
+    else if (option == 0)
+    {
+        initMenu(u, db);
+    }
+    else
+    {
+        printf("Insert a valid operation!\n");
+        goto invalid;
+    }
+}
+
+
 int isAccDataValide(struct Record r)
 {
     (void)r;
     return 0;
 }
 
-void scanAccountNumber(struct Record *r, struct User *u, sqlite3 *db)
+int scanAccountNumber(struct Record *r, struct User *u, sqlite3 *db)
 {
     char input[50];
     char *endptr;
     long num;
+    int ret;
 
     while (1)
     {
@@ -60,7 +71,7 @@ void scanAccountNumber(struct Record *r, struct User *u, sqlite3 *db)
         printf("\nEnter the account number: ");
         if (!fgets(input, sizeof(input), stdin))
         {
-            printf("❌ Error reading input. Please try again.");
+            printf("%s", ERROR_READING);
             continue;
         }
 
@@ -70,81 +81,84 @@ void scanAccountNumber(struct Record *r, struct User *u, sqlite3 *db)
             start++;
         if (*start == '\0')
         {
-            printf("❌ Invalid input! Please enter a valid account number.");
+            printf("%s", INVALID_INPUT);
             continue;
         }
         num = strtol(start, &endptr, 10);
         if (*endptr != '\0')
         {
-            printf("❌ Invalid input! Only numbers are allowed.");
+            printf("%s", INVALID_NUMBER_INPUT);
             continue;
         }
         if ((num == LONG_MAX || num == LONG_MIN) && errno == ERANGE)
         {
-            printf("❌ Error: Number out of range.");
+            printf("%s", OUT_OF_RANGE);
             continue;
         }
         if (num > INT_MAX || num < INT_MIN)
         {
-            printf("❌ Error: Integer overflow/underflow.");
+            printf("%s", OVER_FLOW);
             continue;
         }
         r->accountId = (int)num;
-        // TODO: check if the account s already exist
-        if (isAccountExist(u, db, r->accountId))
+        ret = isAccountExist(u, db, r->accountId);
+        if (ret == -1) {
+            return -1;
+        }
+        if (ret)
         {
-            printf("❌ Error: This account already exists. Please enter a different number.");
+            printf("%s", ACCOUNT_DUP);
             continue;
         }
         break;
     }
+    return 1;
 }
 
 void scanPhoneNumber(struct Record *r)
 {
     char input[50];
-    char *endptr;
-    long num;
 
     while (1)
     {
         system("clear");
-        printf("\nEnter the phone number:");
+        printf("\nEnter the phone number: ");
+        
         if (!fgets(input, sizeof(input), stdin))
         {
-            printf("❌ Error reading input. Please try again.");
+            printf("%s", ERROR_READING);
             continue;
         }
 
         input[strcspn(input, "\n")] = 0;
-        char *start = input;
-        while (isspace((unsigned char)*start))
-            start++;
-        if (*start == '\0')
+
+        int length = 0;
+        int has_plus = (input[0] == '+');
+        for (int i = has_plus; input[i] != '\0'; i++)
         {
-            printf("❌ Invalid input! Please enter a valid account number.");
+            if (!isdigit(input[i]) && input[i] != ' ' && input[i] != '-')
+            {
+                printf("%s", INVALID_NUMBER_INPUT);
+                goto retry;
+            }
+            if (isdigit(input[i]))
+                length++;
+        }
+
+        if (length < 7 || length > 15)
+        {
+            printf("%s", INVALID_PHONE_LENGTH);
             continue;
         }
-        num = strtol(start, &endptr, 10);
-        if (*endptr != '\0')
-        {
-            printf("❌ Invalid input! Only numbers are allowed.");
-            continue;
-        }
-        if ((num == LONG_MAX || num == LONG_MIN) && errno == ERANGE)
-        {
-            printf("❌ Error: Number out of range.");
-            continue;
-        }
-        if (num > INT_MAX || num < INT_MIN)
-        {
-            printf("❌ Error: Integer overflow/underflow.");
-            continue;
-        }
-        r->phone = (int)num;
+
+        strncpy(r->phone, input, 15);
+        r->phone[14] = '\0';
         break;
+
+    retry:;
     }
 }
+
 
 void scanDeposit(struct Record *r)
 {
@@ -159,7 +173,7 @@ void scanDeposit(struct Record *r)
 
         if (!fgets(input, sizeof(input), stdin))
         {
-            printf("❌ Error reading input. Please try again.");
+            printf("%s", ERROR_READING);
             continue;
         }
         input[strcspn(input, "\n")] = 0;
@@ -169,19 +183,21 @@ void scanDeposit(struct Record *r)
 
         if (*start == '\0')
         {
-            printf("❌ Invalid input! Please enter a valid amount.");
+            printf("%s", INVALID_INPUT);
+
             continue;
         }
         errno = 0;
         num = strtod(start, &endptr);
         if (*endptr != '\0')
         {
-            printf("❌ Invalid input! Only numbers are allowed.");
+            printf("%s", INVALID_NUMBER_INPUT);
+
             continue;
         }
         if ((num == HUGE_VAL || num == -HUGE_VAL) && errno == ERANGE)
         {
-            printf("❌ Error: Number out of range.");
+            printf("%s", OUT_OF_RANGE);
             continue;
         }
         r->amount = num;
@@ -207,24 +223,24 @@ void scanDate(struct Record *r)
 
         if (!fgets(input, sizeof(input), stdin))
         {
-            printf("❌ Error reading input. Please try again.");
+            printf("%s", ERROR_READING);
             continue;
         }
         input[strcspn(input, "\n")] = 0;
 
-        if (sscanf(input, "%2d/%2d/%4d", &month, &day, &year) != 3)
+        if (sscanf(input, "%d/%d/%d", &month, &day, &year) != 3)
         {
-            printf("❌ Invalid format! Please enter in MM/DD/YYYY format.");
+            printf("%s", INVALID_DATE_FORMAT);
             continue;
         }
         if (year < 1900 || year > 2200)
         {
-            printf("❌ Invalid year!.");
+            printf("%s", INVALID_YEAR);
             continue;
         }
         if (month < 1 || month > 12)
         {
-            printf("❌ Invalid month! Enter a value between 1 and 12.");
+            printf("%s", INVALID_MONTH);
             continue;
         }
         if (month == 2 && isLeapYear(year))
@@ -233,7 +249,7 @@ void scanDate(struct Record *r)
         }
         if (day < 1 || day > daysInMonth[month])
         {
-            printf("❌ Invalid day! Enter a valid day for the given month.");
+            printf("%s", INVALID_DAY);
             continue;
         }
         snprintf(r->date, sizeof(r->date), "%02d/%02d/%04d", month, day, year);
@@ -253,8 +269,7 @@ void scanCountry(struct Record *r)
     while (!isCountryValid(r->country))
     {
         system("clear");
-        printf("❌ Invalid country! Enter a valid country.\n");
-        printf("the country must be lowercase.\n");
+        printf("%s", INVALID_COUNTRY);
         printf("Enter the country:");
         fgets(r->country, sizeof(r->country), stdin);
         r->country[strcspn(r->country, "\n")] = 0;
@@ -315,8 +330,7 @@ void scanAccountType(struct Record *r)
     while (!isAccountTypeVlid(r->accountType))
     {
         system("clear");
-        printf("❌ Invalid account type! Enter a valid account type.\n");
-        printf("the account type must be lowercase.\n");
+        printf("%s", INVALID_ACCOUNT_TYPE);
         printf("Choose the type of account:\n\t-> saving\n\t-> current\n\t-> fixed01(for 1 year)\n\t-> fixed02(for 2 years)\n\t-> fixed03(for 3 years)\n\n\tEnter your choice:");
         fgets(r->accountType, sizeof(r->accountType), stdin);
         r->accountType[strcspn(r->accountType, "\n")] = 0;

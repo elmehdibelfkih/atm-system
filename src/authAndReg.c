@@ -3,14 +3,14 @@
 
 char *USERS = "./data/users.txt";
 
-void loginMenu(char a[50], char pass[50])
+void loginMenu(char a[NAME_LENGHT], char pass[PASSWORD_LENGHT])
 {
     struct termios oflags, nflags;
 
     system("clear");
     printf("\n\n\n\t\t\t\t   Bank Management System\n");
     printf("\n\t\t\t\t\t User Login: ");
-    fgets(a, 50, stdin);
+    fgets(a, NAME_LENGHT, stdin);
     a[strcspn(a, "\n")] = 0;
 
     tcgetattr(fileno(stdin), &oflags);
@@ -24,7 +24,7 @@ void loginMenu(char a[50], char pass[50])
         return exit(1);
     }
     printf("\n\t\t\t\t\t Enter the password to login: ");
-    fgets(pass, 50, stdin);
+    fgets(pass, PASSWORD_LENGHT, stdin);
     pass[strcspn(pass, "\n")] = 0;
 
     if (tcsetattr(fileno(stdin), TCSANOW, &oflags) != 0)
