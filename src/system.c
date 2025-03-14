@@ -92,23 +92,42 @@ void checkAllAccounts(struct User *u, sqlite3 *db)
         my_error.error_message = DATABASE_ERROR;
         failure(u, db, 1);
     }
+
     sqlite3_bind_text(stmt, 1, u->name, -1, SQLITE_STATIC);
-    printf("\t\t====== All accounts from user, %s =====\n\n", u->name);
+
     system("clear");
-    while (sqlite3_step(stmt) == SQLITE_ROW)
+    printf("\n\n\t\t====== All accounts from user, %s =====\n\n", u->name);
+
+    while ((rc = sqlite3_step(stmt)) == SQLITE_ROW)
     {
         printf("=========================================\n");
+
         r.accountId = sqlite3_column_int(stmt, 3);
-        strcpy(r.date, (char *)sqlite3_column_text(stmt, 4));
-        strcpy(r.country, (char *)sqlite3_column_text(stmt, 5));
-        strcpy(r.phone, (char *)sqlite3_column_text(stmt, 6));
+
+        const char *date = (const char *)sqlite3_column_text(stmt, 4);
+        const char *country = (const char *)sqlite3_column_text(stmt, 5);
+        const char *phone = (const char *)sqlite3_column_text(stmt, 6);
+        const char *accountType = (const char *)sqlite3_column_text(stmt, 8);
+        strcpy(r.date, date ? date : "N/A");
+        strcpy(r.country, country ? country : "N/A");
+        strcpy(r.phone, phone ? phone : "N/A");
         r.amount = sqlite3_column_double(stmt, 7);
-        strcpy(r.accountType, (char *)sqlite3_column_text(stmt, 8));
+        strcpy(r.accountType, accountType ? accountType : "N/A");
+
         printAccountInfo(r);
         printf("=========================================\n");
     }
+
+    if (rc != SQLITE_DONE)
+    {
+        my_error.error_message = DATABASE_ERROR;
+        failure(u, db, 1);
+    }
+
+    sqlite3_finalize(stmt);
     success(u, db, 0);
 }
+
 
 void checkExistingAccounts(struct User *u, sqlite3 *db)
 {

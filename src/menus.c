@@ -5,9 +5,8 @@ void mainMenu(struct User *u, sqlite3 *db)
     int option;
 
     system("clear");
-    printf("\n\t\t-->> welcome %s <<--\n\n", u->name);
+    printf("\n\t\t-->> welcome %s <<--\n", u->name);
     printf(MAIN_MENU);
-    // scanInt(&option);
     scanInt(&option, "option: ", 1, 8);
 
     switch (option)

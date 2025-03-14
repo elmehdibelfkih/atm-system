@@ -124,7 +124,7 @@ The project uses an SQLite database with the following schema:
 4. Run the application.
 
     ```bash
-    ./atm
+    ./atm-system
     ```
 
 ## Usage
