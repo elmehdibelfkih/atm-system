@@ -30,7 +30,7 @@ void failure(struct User *u, sqlite3 *db, int printErr)
 {
     int option;
     system("clear");
-    printf("\n✔ failure!\n\n");
+    printf("\n❌ failure!\n\n");
     if (printErr)
     {
         printf("%s", my_error.error_message);

@@ -64,14 +64,15 @@ int addUser(char *name, char *passWord, sqlite3 *db)
     return 1;
 }
 
-void addRecord(struct Record r, sqlite3 *db)
+int addRecord(struct Record r, sqlite3 *db)
 {
     sqlite3_stmt *stmt;
 
     if (sqlite3_prepare_v2(db, SQLITE_ADD_RECCORD, -1, &stmt, NULL) != SQLITE_OK)
     {
-        fprintf(stderr, "SQL Error: %s\n", sqlite3_errmsg(db));
-        return;
+        my_error.error_message = DATABASE_ERROR;
+        sqlite3_finalize(stmt);
+        return -1;
     }
 
     sqlite3_bind_int(stmt, 1, r.userId);
@@ -79,17 +80,19 @@ void addRecord(struct Record r, sqlite3 *db)
     sqlite3_bind_int(stmt, 3, r.accountId);
     sqlite3_bind_text(stmt, 4, r.date, -1, SQLITE_STATIC);
     sqlite3_bind_text(stmt, 5, r.country, -1, SQLITE_STATIC);
-    sqlite3_bind_text(stmt, 6, r.phone, -1, SQLITE_STATIC); // FIXME:
+    sqlite3_bind_text(stmt, 6, r.phone, -1, SQLITE_STATIC);
     sqlite3_bind_double(stmt, 7, r.amount);
     sqlite3_bind_text(stmt, 8, r.accountType, -1, SQLITE_STATIC);
 
     if (sqlite3_step(stmt) != SQLITE_DONE)
     {
-        fprintf(stderr, "SQL Execution Error: %s\n", sqlite3_errmsg(db));
-        exit(1);
+        my_error.error_message = DATABASE_ERROR;
+        sqlite3_finalize(stmt);
+        return -1;
     }
 
     sqlite3_finalize(stmt);
+    return 1;
 }
 
 // return -1 if an error happen
@@ -249,7 +252,8 @@ int deleteAccount(struct User *u, sqlite3 *db, int accountId)
 {
     sqlite3_stmt *stmt;
 
-    if (sqlite3_prepare_v2(db, SQLITE_DELETE_ACCOUNTS, -1, &stmt, NULL) != SQLITE_OK) {
+    if (sqlite3_prepare_v2(db, SQLITE_DELETE_ACCOUNTS, -1, &stmt, NULL) != SQLITE_OK)
+    {
         my_error.error_message = DATABASE_ERROR;
         return -1;
     }
@@ -264,6 +268,73 @@ int deleteAccount(struct User *u, sqlite3 *db, int accountId)
         return -1;
     }
 
+    sqlite3_finalize(stmt);
+    return 1;
+}
+
+// return 0 if the account does not exist
+// return -1 if an error happen
+// return 1 if the account exist
+int isUserExist(char a[NAME_LENGHT], sqlite3 *db)
+{
+    sqlite3_stmt *stmt;
+    int rc;
+
+    rc = sqlite3_prepare_v2(db, SQLITE_SELECT_USER, -1, &stmt, NULL);
+
+    if (rc != SQLITE_OK)
+    {
+        my_error.error_message = DATABASE_ERROR;
+        return -1;
+    }
+    sqlite3_bind_text(stmt, 1, a, -1, NULL);
+    rc = sqlite3_step(stmt);
+    if (rc == SQLITE_ROW)
+    {
+        sqlite3_finalize(stmt);
+        return 1;
+    }
+    else if (rc == SQLITE_DONE)
+    {
+        sqlite3_finalize(stmt);
+        return 0;
+    }
+    sqlite3_finalize(stmt);
+    my_error.error_message = DATABASE_ERROR;
+    return -1;
+}
+
+int transfer(struct User *u, int accountId, char newOwner[NAME_LENGHT], sqlite3 *db)
+{
+    struct User newOwnerstruct;
+    int err;
+
+    strcpy(newOwnerstruct.name, newOwner);
+    newOwnerstruct.id = getId(&newOwnerstruct, db, &err);
+    if (isAccountExist(&newOwnerstruct, db, accountId))
+    {
+        my_error.error_message = INVALIDE_TRANSFER;
+        failure(u, db, 1);
+    }
+
+    sqlite3_stmt *stmt;
+
+    if (sqlite3_prepare_v2(db, SQLITE_UPDATE_OWNER, -1, &stmt, NULL) != SQLITE_OK)
+    {
+        my_error.error_message = DATABASE_ERROR;
+        return -1;
+    }
+    sqlite3_bind_int(stmt, 1, newOwnerstruct.id);
+    sqlite3_bind_text(stmt, 2, newOwnerstruct.name, -1, SQLITE_STATIC);
+    sqlite3_bind_int(stmt, 3, accountId);
+    sqlite3_bind_text(stmt, 4, u->name, -1, SQLITE_STATIC);
+
+    if (sqlite3_step(stmt) != SQLITE_DONE)
+    {
+        my_error.error_message = DATABASE_ERROR;
+        sqlite3_finalize(stmt);
+        return -1;
+    }
     sqlite3_finalize(stmt);
     return 1;
 }

@@ -18,6 +18,13 @@
 #define INVALID_COUNTRY "❌ Invalid country! Enter a valid country.\nthe country must be lowercase.\n"
 #define INVALID_ACCOUNT_TYPE "❌ Invalid account type! Enter a valid account type.\nthe account type must be lowercase.\n"
 #define INVALID_PHONE_LENGTH "❌Error: Phone number must be between 7 and 15 digits.\n"
-#define INVALIDE_ACCOUNT_ID_RANGE "❌Error: The account ID must be greater than or equal to 1."
+#define INVALIDE_ACCOUNT_ID_RANGE "❌Error: The account ID must be greater than or equal to 1.\n"
+#define INVALIDE_TRANSFER "❌Error: The user you entered already has an existing account with this ID.\nAccount transfer is not possible.\n"
+#define INVALIDE_ACCOUNT_ID "\t\t❌Error: Account ID does not exist. Please enter a valid account.\n"
+#define INVALIDE_USER "\n\t\t❌Error: The user you entered does not exist. Please check the username and try again.\n"
+// #define INVALIDE_ "\t\t❌Error: "
+// #define INVALIDE_ "\t\t❌Error: "
+// #define INVALIDE_ "\t\t❌Error: "
+
 
 #endif

@@ -42,21 +42,6 @@ This project implements an ATM management system in C where users can perform va
 │   ├── atm.db
 │   └── sakila.db
 ├── Makefile
-├── obj
-│   ├── authAndReg.d
-│   ├── authAndReg.o
-│   ├── dataBaseTools.d
-│   ├── dataBaseTools.o
-│   ├── helpers.d
-│   ├── helpers.o
-│   ├── main.d
-│   ├── main.o
-│   ├── menus.d
-│   ├── menus.o
-│   ├── system.d
-│   ├── system.o
-│   ├── tools.d
-│   └── tools.o
 ├── README.md
 ├── src
 │   ├── authAndReg.c

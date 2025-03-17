@@ -93,9 +93,11 @@ void initMenu(struct User *u, sqlite3 *db);
 // data base function
 void intiDataBase(sqlite3 **db);
 int addUser(char *name, char *passWord, sqlite3 *db);
-void addRecord(struct Record r, sqlite3 *db);
+int addRecord(struct Record r, sqlite3 *db);
 int updateCountry(struct User *u, sqlite3 *db, int accountId);
 int updatePhone(struct User *u, sqlite3 *db, int accountId);
+int isUserExist(char a[NAME_LENGHT], sqlite3 *db);
+int transfer(struct User *u, int accountId, char newOwner[NAME_LENGHT], sqlite3 *db);
 
 // helpers
 int isAccountExist(struct User *u, sqlite3 *db, int accountId);

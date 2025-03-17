@@ -11,7 +11,6 @@ void createNewAcc(struct User *u, sqlite3 *db)
     scanDate(&r);
     if (scanAccountNumber(&r, u, db) == -1)
     {
-        printf("%s", my_error.error_message);
         failure(u, db, 1);
     }
     scanPhoneNumber(&r);
@@ -20,7 +19,10 @@ void createNewAcc(struct User *u, sqlite3 *db)
     scanAccountType(&r);
     strcpy(r.name, u->name);
     r.userId = getId(u, db, &err);
-    addRecord(r, db);
+    if (addRecord(r, db) == -1)
+    {
+        failure(u, db, 1);
+    }
     success(u, db, 1);
 }
 
@@ -50,11 +52,12 @@ void updateAccount(struct User *u, sqlite3 *db)
         else if (!tmp)
         {
             system("clear");
-            printf("\t\tAccount ID does not exist. Please enter a valid account.\n");
+            printf(INVALIDE_ACCOUNT_ID);
             continue;
         }
         else
         {
+            system("clear");
             printf("\t\tEnter 1 to update the country or 2 to update the phone number.\n");
             scanInt(&option, "option: ", 1, 2);
             if (option == 1)
@@ -128,7 +131,6 @@ void checkAllAccounts(struct User *u, sqlite3 *db)
     success(u, db, 0);
 }
 
-
 void checkExistingAccounts(struct User *u, sqlite3 *db)
 {
     (void)u;
@@ -165,7 +167,7 @@ void removeExistingAccount(struct User *u, sqlite3 *db)
         else if (!tmp)
         {
             system("clear");
-            printf("\t\tAccount ID does not exist. Please enter a valid account.\n");
+            printf(INVALIDE_ACCOUNT_ID);
             continue;
         }
         else
@@ -179,6 +181,51 @@ void removeExistingAccount(struct User *u, sqlite3 *db)
 
 void transferAccount(struct User *u, sqlite3 *db)
 {
-    (void)u;
-    (void)db;
+    char a[50];
+    int accountId;
+    int tmp;
+
+    system("clear");
+    while (1)
+    {
+        printf("\n\t\tPlease enter the login and account ID of the user to whom you want to transfer the account.");
+        printf("\n\t\tLogin: ");
+        fgets(a, NAME_LENGHT, stdin);
+        a[strcspn(a, "\n")] = 0;
+        if (!isUserExist(a, db))
+        {
+            system("clear");
+            printf(INVALIDE_USER);
+            continue;
+        }
+        system("clear");
+    id:
+        printf("\n\t\tPlease enter the Account ID you wish to transfer.\n"
+               "\t\tEnsure the ID is correct and exists in the system.\n");
+        printf("\t\tTo view all available accounts, return to the main menu by entering -1.\n");
+        scanInt(&accountId, "Account ID: ", -1, INT_MAX);
+        if (accountId == -1)
+        {
+            mainMenu(u, db);
+        }
+        tmp = isAccountExist(u, db, accountId);
+        if (tmp == -1)
+        {
+            failure(u, db, 1);
+        }
+        else if (!tmp)
+        {
+            system("clear");
+            printf(INVALIDE_ACCOUNT_ID);
+            goto id;
+        }
+        else
+        {
+            if (transfer(u, accountId, a, db) == -1) {
+                failure(u, db, 1);
+            }
+            success(u, db, 1);
+        }
+        break;
+    }
 }
