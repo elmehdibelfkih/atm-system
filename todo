@@ -71,3 +71,5 @@ TODO: checkAccData(struct User u) check the data if is valide
     - accountType if exist
     - amount format
     - date format (deposit and withdraw)
+
+TODO: handele long text input

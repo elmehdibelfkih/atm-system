@@ -34,4 +34,6 @@ country, phone, balance, type_of_account) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
 
 #define SQLITE_SELECT_ACCOUNTS "SELECT * FROM records WHERE name = ?"
 
+#define SQLITE_DELETE_ACCOUNTS "DELETE FROM records WHERE accountId = ? AND name = ?"
+
 #endif

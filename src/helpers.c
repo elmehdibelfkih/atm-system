@@ -96,6 +96,10 @@ int scanAccountNumber(struct Record *r, struct User *u, sqlite3 *db)
             printf("%s", OVER_FLOW);
             continue;
         }
+        if (num < 1) {
+            printf("%s", INVALIDE_ACCOUNT_ID_RANGE);
+            continue;
+        }
         r->accountId = (int)num;
         ret = isAccountExist(u, db, r->accountId);
         if (ret == -1)

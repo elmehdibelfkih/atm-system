@@ -18,5 +18,6 @@
 #define INVALID_COUNTRY "❌ Invalid country! Enter a valid country.\nthe country must be lowercase.\n"
 #define INVALID_ACCOUNT_TYPE "❌ Invalid account type! Enter a valid account type.\nthe account type must be lowercase.\n"
 #define INVALID_PHONE_LENGTH "❌Error: Phone number must be between 7 and 15 digits.\n"
+#define INVALIDE_ACCOUNT_ID_RANGE "❌Error: The account ID must be greater than or equal to 1."
 
 #endif

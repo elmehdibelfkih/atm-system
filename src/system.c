@@ -143,8 +143,38 @@ void makeTransaction(struct User *u, sqlite3 *db)
 
 void removeExistingAccount(struct User *u, sqlite3 *db)
 {
-    (void)u;
-    (void)db;
+    int accountId;
+    int tmp;
+
+    system("clear");
+    while (1)
+    {
+        printf("\n\n\t\tPlease enter the Account ID you wish to delete.\n"
+               "\t\tEnsure the ID is correct and exists in the system.\n");
+        printf("\t\tTo view all available accounts, return to the main menu by entering -1.\n");
+        scanInt(&accountId, "Account ID: ", -1, INT_MAX);
+        if (accountId == -1)
+        {
+            mainMenu(u, db);
+        }
+        tmp = isAccountExist(u, db, accountId);
+        if (tmp == -1)
+        {
+            failure(u, db, 1);
+        }
+        else if (!tmp)
+        {
+            system("clear");
+            printf("\t\tAccount ID does not exist. Please enter a valid account.\n");
+            continue;
+        }
+        else
+        {
+            deleteAccount(u, db, accountId);
+            success(u, db, 1);
+        }
+        break;
+    }
 }
 
 void transferAccount(struct User *u, sqlite3 *db)

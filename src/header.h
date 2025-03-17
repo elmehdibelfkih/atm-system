@@ -111,6 +111,7 @@ void scanAccountType(struct Record *r);
 int isCountryValid(const char *name);
 int isAccountTypeVlid(const char *type);
 void printAccountInfo(struct Record r);
+int deleteAccount(struct User *u, sqlite3 *db, int accountId);
 
 // tools
 int n_of_world(char const *s, char c);

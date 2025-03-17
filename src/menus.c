@@ -15,27 +15,25 @@ void mainMenu(struct User *u, sqlite3 *db)
         createNewAcc(u, db);
         break;
     case 2:
-        // TODO: add your **Update account information** function
         updateAccount(u, db);
         break;
     case 3:
         // TODO: add your **Check the details of existing accounts** function
-        // checkExistingAccounts(u, db);
+        checkExistingAccounts(u, db);
         break;
     case 4:
         checkAllAccounts(u, db);
         break;
     case 5:
         // TODO: add your **Make transaction** function
-        // makeTransaction(u, db);
+        makeTransaction(u, db);
         break;
     case 6:
-        // TODO: add your **Remove existing account** function
-        // removeExistingAccount(u, db);
+        removeExistingAccount(u, db);
         break;
     case 7:
         // TODO: add your **Transfer owner** function
-        // transferAccount(u, db);
+        transferAccount(u, db);
         break;
     case 8:
         initMenu(u, db);
@@ -55,7 +53,6 @@ void initMenu(struct User *u, sqlite3 *db)
     while (!r)
     {
         printf(INIT_MENU);
-        // scanInt(&option);
         scanInt(&option, "option: ", 1, 3);
         switch (option)
         {

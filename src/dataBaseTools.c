@@ -244,3 +244,26 @@ int updatePhone(struct User *u, sqlite3 *db, int accountId)
     sqlite3_finalize(stmt);
     return 1;
 }
+
+int deleteAccount(struct User *u, sqlite3 *db, int accountId)
+{
+    sqlite3_stmt *stmt;
+
+    if (sqlite3_prepare_v2(db, SQLITE_DELETE_ACCOUNTS, -1, &stmt, NULL) != SQLITE_OK) {
+        my_error.error_message = DATABASE_ERROR;
+        return -1;
+    }
+
+    sqlite3_bind_int(stmt, 1, accountId);
+    sqlite3_bind_text(stmt, 2, u->name, -1, SQLITE_STATIC);
+
+    if (sqlite3_step(stmt) != SQLITE_DONE)
+    {
+        my_error.error_message = DATABASE_ERROR;
+        sqlite3_finalize(stmt);
+        return -1;
+    }
+
+    sqlite3_finalize(stmt);
+    return 1;
+}
