@@ -131,7 +131,7 @@ int getPassword(struct User *u, sqlite3 *db, char password[PASSWORD_LENGHT])
     }
 }
 
-int getId(struct User *u, sqlite3 *db, int *err) // FIXME: set the custom errno
+int getId(struct User *u, sqlite3 *db, int *err)
 {
     int id = -1;
     sqlite3_stmt *stmt;
@@ -153,7 +153,7 @@ int getId(struct User *u, sqlite3 *db, int *err) // FIXME: set the custom errno
         *err = 1;
         id = -1;
     }
-    sqlite3_finalize(stmt); // FIXME
+    sqlite3_finalize(stmt);
     return id;
 }
 
@@ -227,7 +227,7 @@ int updatePhone(struct User *u, sqlite3 *db, int accountId)
     scanPhoneNumber(&r);
     sqlite3_stmt *stmt;
 
-    if (sqlite3_prepare_v2(db, SQLITE_UPDATE_COUNTRY, -1, &stmt, NULL) != SQLITE_OK)
+    if (sqlite3_prepare_v2(db, SQLITE_UPDATE_PHONE, -1, &stmt, NULL) != SQLITE_OK)
     {
         my_error.error_message = DATABASE_ERROR;
         return -1;

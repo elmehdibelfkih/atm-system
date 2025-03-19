@@ -166,10 +166,10 @@ int isCountryValid(const char *name)
         "south africa", "south korea", "south sudan", "spain", "sri lanka", "sudan", "suriname",
         "sweden", "switzerland", "syria", "taiwan", "tajikistan", "tanzania", "thailand",
         "timor-leste", "togo", "tonga", "trinidad and tobago", "tunisia", "turkey", "turkmenistan",
-        "tuvalu", "uganda", "ukraine", "united arab emirates", "united kingdom", "united states",
+        "tuvalu", "uganda", "usa", "uk", "ukraine", "united arab emirates", "united kingdom", "united states",
         "uruguay", "uzbekistan", "vanuatu", "vatican city", "venezuela", "vietnam",
         "yemen", "zambia", "zimbabwe"};
-    const size_t countries_count = 196;
+    const size_t countries_count = 198;
 
     for (size_t i = 0; i < countries_count; i++)
     {

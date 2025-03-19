@@ -3,7 +3,8 @@
 void success(struct User *u, sqlite3 *db, int clear)
 {
     int option;
-    if (clear) {
+    if (clear)
+    {
         system("clear");
     }
     printf("\n✔ Success!\n\n");
@@ -61,12 +62,14 @@ int scanAccountNumber(struct Record *r, struct User *u, sqlite3 *db)
     long num;
     int ret;
 
+    system("clear");
     while (1)
     {
-        system("clear");
         printf("\nEnter the account number: ");
         if (!fgets(input, sizeof(input), stdin))
         {
+            system("clear");
+
             printf("%s", ERROR_READING);
             continue;
         }
@@ -77,26 +80,34 @@ int scanAccountNumber(struct Record *r, struct User *u, sqlite3 *db)
             start++;
         if (*start == '\0')
         {
+            system("clear");
+
             printf("%s", INVALID_INPUT);
             continue;
         }
         num = strtol(start, &endptr, 10);
         if (*endptr != '\0')
         {
+            system("clear");
             printf("%s", INVALID_NUMBER_INPUT);
             continue;
         }
         if ((num == LONG_MAX || num == LONG_MIN) && errno == ERANGE)
         {
+            system("clear");
+
             printf("%s", OUT_OF_RANGE);
             continue;
         }
         if (num > INT_MAX || num < INT_MIN)
         {
+            system("clear");
             printf("%s", OVER_FLOW);
             continue;
         }
-        if (num < 1) {
+        if (num < 1)
+        {
+            system("clear");
             printf("%s", INVALIDE_ACCOUNT_ID_RANGE);
             continue;
         }
@@ -108,6 +119,7 @@ int scanAccountNumber(struct Record *r, struct User *u, sqlite3 *db)
         }
         if (ret)
         {
+            system("clear");
             printf("%s", ACCOUNT_DUP);
             continue;
         }
@@ -274,14 +286,14 @@ void scanCountry(struct Record *r)
 void scanAccountType(struct Record *r)
 {
     system("clear");
-    printf("\nChoose the type of account:\n\t-> saving\n\t-> current\n\t-> fixed01(for 1 year)\n\t-> fixed02(for 2 years)\n\t-> fixed03(for 3 years)\n\n\tEnter your choice:");
+    printf("\nChoose the type of account:\n\t-> savings\n\t-> current\n\t-> fixed01(for 1 year)\n\t-> fixed02(for 2 years)\n\t-> fixed03(for 3 years)\n\n\tEnter your choice:");
     fgets(r->accountType, sizeof(r->accountType), stdin);
     r->accountType[strcspn(r->accountType, "\n")] = 0;
     while (!isAccountTypeVlid(r->accountType))
     {
         system("clear");
         printf("%s", INVALID_ACCOUNT_TYPE);
-        printf("Choose the type of account:\n\t-> saving\n\t-> current\n\t-> fixed01(for 1 year)\n\t-> fixed02(for 2 years)\n\t-> fixed03(for 3 years)\n\n\tEnter your choice:");
+        printf("Choose the type of account:\n\t-> savings\n\t-> current\n\t-> fixed01(for 1 year)\n\t-> fixed02(for 2 years)\n\t-> fixed03(for 3 years)\n\n\tEnter your choice:");
         fgets(r->accountType, sizeof(r->accountType), stdin);
         r->accountType[strcspn(r->accountType, "\n")] = 0;
     }
@@ -292,7 +304,7 @@ int isAccountTypeVlid(const char *type)
     const size_t typesCount = 5;
 
     const char *types[] = {
-        "saving", "current", "fixed01", "fixed02", "fixed03"};
+        "savings", "current", "fixed01", "fixed02", "fixed03"};
 
     for (size_t i = 0; i < typesCount; i++)
     {
@@ -313,4 +325,71 @@ void printAccountInfo(struct Record r)
            r.phone,
            r.amount,
            r.accountType);
+}
+
+void getAccountId(struct User *u, sqlite3 *db, int *accountId)
+{
+    int tmp;
+
+    system("clear");
+    while (1)
+    {
+        printf("\n\n\t\tPlease enter the Account ID you wish to modify or update.\n"
+               "\t\tEnsure the ID is correct and exists in the system.\n");
+        printf("\t\tTo view all available accounts, return to the main menu by entering -1.\n");
+        scanInt(accountId, "Account ID: ", -1, INT_MAX);
+        if (*accountId == -1)
+        {
+            mainMenu(u, db);
+        }
+        tmp = isAccountExist(u, db, *accountId);
+        if (tmp == -1)
+        {
+            failure(u, db, 1);
+        }
+        else if (!tmp)
+        {
+            system("clear");
+            printf(INVALIDE_ACCOUNT_ID);
+            continue;
+        }
+        break;
+    }
+}
+
+// savings: interest rate 7%
+// fixed01(1 year account): interest rate 4%
+// fixed02(2 year account): interest rate 5%
+// fixed03(3 year account): interest rate 8%
+void printInterest(char accountType[ACCOUNT_TYPE_LENGHT], double amount, char date[DATE_LENGHT])
+{
+    double tmp;
+    char **dateTmp;
+
+    dateTmp = split(date, '/');
+    if (strcmp(accountType, "current") == 0)
+    {
+        printf("You will not get interests because the account is of type current\n");
+        clear(dateTmp, 3);
+        return;
+    }
+    else if (strcmp(accountType, "savings") == 0)
+    {
+        tmp = amount * 7 / 100 / 12;
+    }
+    else if (strcmp(accountType, "fixed01") == 0)
+    {
+        tmp = amount * 4 / 100 / 12;
+    }
+    else if (strcmp(accountType, "fixed02") == 0)
+    {
+        tmp = amount * 5 / 100 / 12;
+    }
+    else if (strcmp(accountType, "fixed03") == 0)
+    {
+        tmp = amount * 8 / 100 / 12;
+    }
+
+    printf("You will get $%.2f as interest on day %s of every month\n", tmp, dateTmp[0]);
+    clear(dateTmp, 3);
 }

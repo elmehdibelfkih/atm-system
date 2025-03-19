@@ -107,15 +107,16 @@ int scanAccountNumber(struct Record *r, struct User *u, sqlite3 *db);
 void scanPhoneNumber(struct Record *r);
 void scanDeposit(struct Record *r);
 void scanDate(struct Record *r);
-int isLeapYear(int year);
 void scanCountry(struct Record *r);
 void scanAccountType(struct Record *r);
-int isCountryValid(const char *name);
 int isAccountTypeVlid(const char *type);
 void printAccountInfo(struct Record r);
 int deleteAccount(struct User *u, sqlite3 *db, int accountId);
-
+void getAccountId(struct User *u, sqlite3 *db, int *accountId);
+void printInterest(char accountType[ACCOUNT_TYPE_LENGHT], double amount, char date[DATE_LENGHT]);
 // tools
+int isCountryValid(const char *name);
+int isLeapYear(int year);
 int n_of_world(char const *s, char c);
 int plen(char **spl, const char *s, char c);
 int clear(char **spl, int p);

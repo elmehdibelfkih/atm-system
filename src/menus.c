@@ -18,7 +18,6 @@ void mainMenu(struct User *u, sqlite3 *db)
         updateAccount(u, db);
         break;
     case 3:
-        // TODO: add your **Check the details of existing accounts** function
         checkExistingAccounts(u, db);
         break;
     case 4:
@@ -32,7 +31,6 @@ void mainMenu(struct User *u, sqlite3 *db)
         removeExistingAccount(u, db);
         break;
     case 7:
-        // TODO: add your **Transfer owner** function
         transferAccount(u, db);
         break;
     case 8:

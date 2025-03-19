@@ -40,5 +40,8 @@ country, phone, balance, type_of_account) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
 
 #define SQLITE_UPDATE_OWNER "UPDATE records SET (user_id, name) = (?, ?) WHERE accountId = ? AND name = ?"
 
+#define SQLITE_SELECT_ACCOUNT "SELECT * FROM records WHERE name = ? AND accountId = ?"
+
+
 
 #endif
