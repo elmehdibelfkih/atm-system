@@ -270,32 +270,26 @@ void scanDate(struct Record *r)
 void scanCountry(struct Record *r)
 {
     system("clear");
-    printf("\nEnter the country:");
-    fgets(r->country, sizeof(r->country), stdin);
-    r->country[strcspn(r->country, "\n")] = 0;
+    scanLen("\nEnter the country:", r->country, COUNTRY_LENGHT);
+
     while (!isCountryValid(r->country))
     {
         system("clear");
         printf("%s", INVALID_COUNTRY);
-        printf("Enter the country:");
-        fgets(r->country, sizeof(r->country), stdin);
-        r->country[strcspn(r->country, "\n")] = 0;
+        scanLen("\nEnter the country:", r->country, COUNTRY_LENGHT);
     }
 }
 
 void scanAccountType(struct Record *r)
 {
+    char *msg = "\nChoose the type of account:\n\t-> savings\n\t-> current\n\t-> fixed01(for 1 year)\n\t-> fixed02(for 2 years)\n\t-> fixed03(for 3 years)\n\n\tEnter your choice:";
     system("clear");
-    printf("\nChoose the type of account:\n\t-> savings\n\t-> current\n\t-> fixed01(for 1 year)\n\t-> fixed02(for 2 years)\n\t-> fixed03(for 3 years)\n\n\tEnter your choice:");
-    fgets(r->accountType, sizeof(r->accountType), stdin);
-    r->accountType[strcspn(r->accountType, "\n")] = 0;
+    scanLen(msg, r->accountType, ACCOUNT_TYPE_LENGHT);
     while (!isAccountTypeVlid(r->accountType))
     {
         system("clear");
         printf("%s", INVALID_ACCOUNT_TYPE);
-        printf("Choose the type of account:\n\t-> savings\n\t-> current\n\t-> fixed01(for 1 year)\n\t-> fixed02(for 2 years)\n\t-> fixed03(for 3 years)\n\n\tEnter your choice:");
-        fgets(r->accountType, sizeof(r->accountType), stdin);
-        r->accountType[strcspn(r->accountType, "\n")] = 0;
+        scanLen(msg, r->accountType, ACCOUNT_TYPE_LENGHT);
     }
 }
 

@@ -155,7 +155,6 @@ void checkExistingAccounts(struct User *u, sqlite3 *db)
 
 void makeTransaction(struct User *u, sqlite3 *db)
 {
-
     (void)u;
     (void)db;
 }
@@ -181,9 +180,8 @@ void transferAccount(struct User *u, sqlite3 *db)
     while (1)
     {
         printf("\n\t\tPlease enter the login and account ID of the user to whom you want to transfer the account.");
-        printf("\n\t\tLogin: ");
-        fgets(a, NAME_LENGHT, stdin);
-        a[strcspn(a, "\n")] = 0;
+        scanLen("\n\t\tLogin: ", a, NAME_LENGHT);
+
         if (!isUserExist(a, db))
         {
             system("clear");

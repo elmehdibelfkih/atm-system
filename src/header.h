@@ -35,6 +35,9 @@
 #define PHONE_LENGHT 20
 #define ACCOUNT_TYPE_LENGHT 10
 #define DATE_LENGHT 11
+#define COUNTRY_LENGHT 50
+
+
 
 
 typedef struct
@@ -52,7 +55,7 @@ struct Date
 struct Record
 {
     char name[NAME_LENGHT];
-    char country[PASSWORD_LENGHT];
+    char country[COUNTRY_LENGHT];
     char accountType[ACCOUNT_TYPE_LENGHT];
     int id;
     char phone[PHONE_LENGHT];
@@ -114,6 +117,7 @@ void printAccountInfo(struct Record r);
 int deleteAccount(struct User *u, sqlite3 *db, int accountId);
 void getAccountId(struct User *u, sqlite3 *db, int *accountId);
 void printInterest(char accountType[ACCOUNT_TYPE_LENGHT], double amount, char date[DATE_LENGHT]);
+
 // tools
 int isCountryValid(const char *name);
 int isLeapYear(int year);
@@ -123,5 +127,6 @@ int clear(char **spl, int p);
 char **split(char const *s, char c);
 char *substr(char const *s, unsigned int start, size_t len);
 void scanInt(int *result, char *prefix, int start, int end);
+void scanLen(char *prefix, char *str, int len);
 
 #endif

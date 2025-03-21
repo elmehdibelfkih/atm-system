@@ -122,7 +122,8 @@ void scanInt(int *result, char *prefix, int start, int end)
 			printf("\t\tInsert a valid input!\n");
 			continue;
 		}
-		if (num < start || num > end) {
+		if (num < start || num > end)
+		{
 			printf("\t\tInsert a valid input!\n");
 			continue;
 		}
@@ -133,50 +134,68 @@ void scanInt(int *result, char *prefix, int start, int end)
 
 int isLeapYear(int year)
 {
-    return (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
+	return (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
 }
 
 int isCountryValid(const char *name)
 {
-    const char *countries[] = {
-        "afghanistan", "albania", "algeria", "andorra", "angola", "antigua and barbuda",
-        "argentina", "armenia", "australia", "austria", "azerbaijan", "bahamas", "bahrain",
-        "bangladesh", "barbados", "belarus", "belgium", "belize", "benin", "bhutan", "bolivia",
-        "bosnia and herzegovina", "botswana", "brazil", "brunei", "bulgaria", "burkina faso",
-        "burundi", "cabo verde", "cambodia", "cameroon", "canada", "central african republic",
-        "chad", "chile", "china", "colombia", "comoros", "congo", "costa rica", "croatia",
-        "cuba", "cyprus", "czech republic", "democratic republic of the congo", "denmark",
-        "djibouti", "dominica", "dominican republic", "ecuador", "egypt", "el salvador",
-        "equatorial guinea", "eritrea", "estonia", "eswatini", "ethiopia", "fiji", "finland",
-        "france", "gabon", "gambia", "georgia", "germany", "ghana", "greece", "grenada",
-        "guatemala", "guinea", "guinea-bissau", "guyana", "haiti", "honduras", "hungary",
-        "iceland", "india", "indonesia", "iran", "iraq", "ireland", "israel", "italy",
-        "ivory coast", "jamaica", "japan", "jordan", "kazakhstan", "kenya", "kiribati",
-        "kuwait", "kyrgyzstan", "laos", "latvia", "lebanon", "lesotho", "liberia", "libya",
-        "liechtenstein", "lithuania", "luxembourg", "madagascar", "malawi", "malaysia",
-        "maldives", "mali", "malta", "marshall islands", "mauritania", "mauritius",
-        "mexico", "micronesia", "moldova", "monaco", "mongolia", "montenegro", "morocco",
-        "mozambique", "myanmar", "namibia", "nauru", "nepal", "netherlands", "new zealand",
-        "nicaragua", "niger", "nigeria", "north korea", "north macedonia", "norway",
-        "oman", "pakistan", "palau", "palestine", "panama", "papua new guinea", "paraguay",
-        "peru", "philippines", "poland", "portugal", "qatar", "romania", "russia", "rwanda",
-        "saint kitts and nevis", "saint lucia", "saint vincent and the grenadines", "samoa",
-        "san marino", "sao tome and principe", "saudi arabia", "senegal", "serbia", "seychelles",
-        "sierra leone", "singapore", "slovakia", "slovenia", "solomon islands", "somalia",
-        "south africa", "south korea", "south sudan", "spain", "sri lanka", "sudan", "suriname",
-        "sweden", "switzerland", "syria", "taiwan", "tajikistan", "tanzania", "thailand",
-        "timor-leste", "togo", "tonga", "trinidad and tobago", "tunisia", "turkey", "turkmenistan",
-        "tuvalu", "uganda", "usa", "uk", "ukraine", "united arab emirates", "united kingdom", "united states",
-        "uruguay", "uzbekistan", "vanuatu", "vatican city", "venezuela", "vietnam",
-        "yemen", "zambia", "zimbabwe"};
-    const size_t countries_count = 198;
+	const char *countries[] = {
+		"afghanistan", "albania", "algeria", "andorra", "angola", "antigua and barbuda",
+		"argentina", "armenia", "australia", "austria", "azerbaijan", "bahamas", "bahrain",
+		"bangladesh", "barbados", "belarus", "belgium", "belize", "benin", "bhutan", "bolivia",
+		"bosnia and herzegovina", "botswana", "brazil", "brunei", "bulgaria", "burkina faso",
+		"burundi", "cabo verde", "cambodia", "cameroon", "canada", "central african republic",
+		"chad", "chile", "china", "colombia", "comoros", "congo", "costa rica", "croatia",
+		"cuba", "cyprus", "czech republic", "democratic republic of the congo", "denmark",
+		"djibouti", "dominica", "dominican republic", "ecuador", "egypt", "el salvador",
+		"equatorial guinea", "eritrea", "estonia", "eswatini", "ethiopia", "fiji", "finland",
+		"france", "gabon", "gambia", "georgia", "germany", "ghana", "greece", "grenada",
+		"guatemala", "guinea", "guinea-bissau", "guyana", "haiti", "honduras", "hungary",
+		"iceland", "india", "indonesia", "iran", "iraq", "ireland", "israel", "italy",
+		"ivory coast", "jamaica", "japan", "jordan", "kazakhstan", "kenya", "kiribati",
+		"kuwait", "kyrgyzstan", "laos", "latvia", "lebanon", "lesotho", "liberia", "libya",
+		"liechtenstein", "lithuania", "luxembourg", "madagascar", "malawi", "malaysia",
+		"maldives", "mali", "malta", "marshall islands", "mauritania", "mauritius",
+		"mexico", "micronesia", "moldova", "monaco", "mongolia", "montenegro", "morocco",
+		"mozambique", "myanmar", "namibia", "nauru", "nepal", "netherlands", "new zealand",
+		"nicaragua", "niger", "nigeria", "north korea", "north macedonia", "norway",
+		"oman", "pakistan", "palau", "palestine", "panama", "papua new guinea", "paraguay",
+		"peru", "philippines", "poland", "portugal", "qatar", "romania", "russia", "rwanda",
+		"saint kitts and nevis", "saint lucia", "saint vincent and the grenadines", "samoa",
+		"san marino", "sao tome and principe", "saudi arabia", "senegal", "serbia", "seychelles",
+		"sierra leone", "singapore", "slovakia", "slovenia", "solomon islands", "somalia",
+		"south africa", "south korea", "south sudan", "spain", "sri lanka", "sudan", "suriname",
+		"sweden", "switzerland", "syria", "taiwan", "tajikistan", "tanzania", "thailand",
+		"timor-leste", "togo", "tonga", "trinidad and tobago", "tunisia", "turkey", "turkmenistan",
+		"tuvalu", "uganda", "usa", "uk", "ukraine", "united arab emirates", "united kingdom", "united states",
+		"uruguay", "uzbekistan", "vanuatu", "vatican city", "venezuela", "vietnam",
+		"yemen", "zambia", "zimbabwe"};
+	const size_t countries_count = 198;
 
-    for (size_t i = 0; i < countries_count; i++)
-    {
-        if (strcmp(countries[i], name) == 0)
-        {
-            return 1;
-        }
-    }
-    return 0;
+	for (size_t i = 0; i < countries_count; i++)
+	{
+		if (strcmp(countries[i], name) == 0)
+		{
+			return 1;
+		}
+	}
+	return 0;
+}
+
+void scanLen(char *prefix, char *str, int len)
+{
+	char c;
+	while (1)
+	{
+		printf("%s", prefix);
+		fgets(str, len, stdin);
+		if (!strchr(str, '\n'))
+		{
+			printf("The maximum allowed input length is %d characters. Please enter a shorter input and try again.\n", len);
+			while ((c = getchar()) != '\n' && c != EOF); 
+			continue;
+		}
+		str[strcspn(str, "\n")] = 0;
+		break;
+	}
 }

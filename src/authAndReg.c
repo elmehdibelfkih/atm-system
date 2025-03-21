@@ -9,9 +9,7 @@ void loginMenu(char a[NAME_LENGHT], char pass[PASSWORD_LENGHT])
 
     system("clear");
     printf("\n\n\n\t\t\t\t   Bank Management System\n");
-    printf("\n\t\t\t\t\t User Login: ");
-    fgets(a, NAME_LENGHT, stdin);
-    a[strcspn(a, "\n")] = 0;
+    scanLen("\n\t\t\t\t\t User Login: ", a, NAME_LENGHT);
 
     tcgetattr(fileno(stdin), &oflags);
     nflags = oflags;
@@ -23,9 +21,7 @@ void loginMenu(char a[NAME_LENGHT], char pass[PASSWORD_LENGHT])
         perror("tcsetattr");
         return exit(1);
     }
-    printf("\n\t\t\t\t\t Enter the password to login: ");
-    fgets(pass, PASSWORD_LENGHT, stdin);
-    pass[strcspn(pass, "\n")] = 0;
+    scanLen("\n\t\t\t\t\t Enter the password to login: ", pass, PASSWORD_LENGHT);
 
     if (tcsetattr(fileno(stdin), TCSANOW, &oflags) != 0)
     {
@@ -34,16 +30,15 @@ void loginMenu(char a[NAME_LENGHT], char pass[PASSWORD_LENGHT])
     }
 };
 
-int registration(sqlite3 *db, struct User *u) {
+int registration(sqlite3 *db, struct User *u)
+{
     struct termios oflags, nflags;
 
     system("clear");
     printf("\n\n\n\t\t\t\t      Bank Management System\n");
     printf("\n\n\n\t\t\t\t   ======= registration =======\n");
-    printf("\n\t\t\t\t\t User Login: ");
-    fgets(u->name, sizeof(u->name), stdin);
-    u->name[strcspn(u->name, "\n")] = 0;
 
+    scanLen("\n\t\t\t\t\t User Login: ", u->name, NAME_LENGHT);
 
     tcgetattr(fileno(stdin), &oflags);
     nflags = oflags;
@@ -55,9 +50,7 @@ int registration(sqlite3 *db, struct User *u) {
         perror("tcsetattr");
         exit(1);
     }
-    printf("\n\t\t\t\t\t Enter the password: ");
-    fgets(u->password, sizeof(u->password), stdin);
-    u->password[strcspn(u->password, "\n")] = 0;
+    scanLen("\n\t\t\t\t\t Enter the password: ", u->password, PASSWORD_LENGHT);
 
     if (tcsetattr(fileno(stdin), TCSANOW, &oflags) != 0)
     {
