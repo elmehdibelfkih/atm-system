@@ -188,14 +188,29 @@ void scanLen(char *prefix, char *str, int len)
 	while (1)
 	{
 		printf("%s", prefix);
-		fgets(str, len, stdin);
-		if (!strchr(str, '\n'))
+		if (!fgets(str, len, stdin))
 		{
-			printf("The maximum allowed input length is %d characters. Please enter a shorter input and try again.\n", len);
-			while ((c = getchar()) != '\n' && c != EOF); 
+			system("clear");
+			printf("%s", ERROR_READING);
 			continue;
 		}
+		if (!strchr(str, '\n'))
+		{
+			system("clear");
+			printf("❌Error: The maximum allowed input length is %d characters.\nPlease enter a shorter input and try again.\n", len);
+			while ((c = getchar()) != '\n' && c != EOF)
+			;
+			continue;
+		}
+		
+		
 		str[strcspn(str, "\n")] = 0;
+		if (*str == '\0')
+		{
+			system("clear");
+			printf("%s", INVALID_INPUT);
+			continue;
+		}
 		break;
 	}
 }

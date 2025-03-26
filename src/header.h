@@ -34,6 +34,7 @@
 #define PASSWORD_LENGHT 50
 #define PHONE_LENGHT 20
 #define ACCOUNT_TYPE_LENGHT 10
+#define ACCOUNT_ID_LENGHT 10
 #define DATE_LENGHT 11
 #define COUNTRY_LENGHT 50
 
@@ -47,10 +48,10 @@ typedef struct
 
 extern MyError my_error;
 
-struct Date
-{
-    int month, day, year;
-};
+// struct Date
+// {
+//     int month, day, year;
+// };
 
 struct Record
 {
@@ -63,8 +64,8 @@ struct Record
     int accountId;
     double amount;
     char date[DATE_LENGHT];
-    struct Date deposit;
-    struct Date withdraw;
+    // struct Date deposit;
+    // struct Date withdraw;
 };
 
 struct User

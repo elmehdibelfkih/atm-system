@@ -57,7 +57,7 @@ invalid:
 
 int scanAccountNumber(struct Record *r, struct User *u, sqlite3 *db)
 {
-    char input[50];
+    char input[ACCOUNT_ID_LENGHT];
     char *endptr;
     long num;
     int ret;
@@ -65,16 +65,17 @@ int scanAccountNumber(struct Record *r, struct User *u, sqlite3 *db)
     system("clear");
     while (1)
     {
-        printf("\nEnter the account number: ");
-        if (!fgets(input, sizeof(input), stdin))
-        {
-            system("clear");
+        // printf("\nEnter the account number: ");
+        // if (!fgets(input, sizeof(input), stdin))
+        // {
+        //     system("clear");
 
-            printf("%s", ERROR_READING);
-            continue;
-        }
+        //     printf("%s", ERROR_READING);
+        //     continue;
+        // }
 
-        input[strcspn(input, "\n")] = 0;
+        // input[strcspn(input, "\n")] = 0;
+        scanLen("\nEnter the account number: ", input,  ACCOUNT_ID_LENGHT);
         char *start = input;
         while (isspace((unsigned char)*start))
             start++;
@@ -130,21 +131,12 @@ int scanAccountNumber(struct Record *r, struct User *u, sqlite3 *db)
 
 void scanPhoneNumber(struct Record *r)
 {
-    char input[50];
+    char input[PHONE_LENGHT];
 
     while (1)
     {
         system("clear");
-        printf("\nEnter the phone number: ");
-
-        if (!fgets(input, sizeof(input), stdin))
-        {
-            printf("%s", ERROR_READING);
-            continue;
-        }
-
-        input[strcspn(input, "\n")] = 0;
-
+        scanLen("\nEnter the phone number: ", input,  PHONE_LENGHT);
         int length = 0;
         int has_plus = (input[0] == '+');
         for (int i = has_plus; input[i] != '\0'; i++)
@@ -157,14 +149,13 @@ void scanPhoneNumber(struct Record *r)
             if (isdigit(input[i]))
                 length++;
         }
-
-        if (length < 7 || length > 15)
+        if (length < 7 || length > PHONE_LENGHT)
         {
             printf("%s", INVALID_PHONE_LENGTH);
             continue;
         }
 
-        strncpy(r->phone, input, 15);
+        strncpy(r->phone, input, PHONE_LENGHT);
         r->phone[14] = '\0';
         break;
 
@@ -260,9 +251,6 @@ void scanDate(struct Record *r)
             continue;
         }
         snprintf(r->date, sizeof(r->date), "%02d/%02d/%04d", month, day, year);
-        r->deposit.day = day;
-        r->deposit.month = month;
-        r->deposit.year = year;
         break;
     }
 }

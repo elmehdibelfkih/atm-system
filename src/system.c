@@ -173,7 +173,7 @@ void removeExistingAccount(struct User *u, sqlite3 *db)
 
 void transferAccount(struct User *u, sqlite3 *db)
 {
-    char a[50];
+    char a[NAME_LENGHT];
     int accountId;
 
     system("clear");
