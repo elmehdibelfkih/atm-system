@@ -1,15 +1,13 @@
 #include <termios.h>
 #include "header.h"
 
-char *USERS = "./data/users.txt";
-
 void loginMenu(char a[NAME_LENGHT], char pass[PASSWORD_LENGHT])
 {
     struct termios oflags, nflags;
 
     system("clear");
     printf("\n\n\n\t\t\t\t   Bank Management System\n");
-    scanLen("\n\t\t\t\t\t User Login: ", a, NAME_LENGHT);
+    scanLen("\n\t\t\t\t\t User Login: ", a, NAME_LENGHT, 0);
 
     tcgetattr(fileno(stdin), &oflags);
     nflags = oflags;
@@ -21,7 +19,7 @@ void loginMenu(char a[NAME_LENGHT], char pass[PASSWORD_LENGHT])
         perror("tcsetattr");
         return exit(1);
     }
-    scanLen("\n\t\t\t\t\t Enter the password to login: ", pass, PASSWORD_LENGHT);
+    scanLen("\n\t\t\t\t\t Enter the password to login: ", pass, PASSWORD_LENGHT, 0);
 
     if (tcsetattr(fileno(stdin), TCSANOW, &oflags) != 0)
     {
@@ -38,7 +36,7 @@ int registration(sqlite3 *db, struct User *u)
     printf("\n\n\n\t\t\t\t      Bank Management System\n");
     printf("\n\n\n\t\t\t\t   ======= registration =======\n");
 
-    scanLen("\n\t\t\t\t\t User Login: ", u->name, NAME_LENGHT);
+    scanLen("\n\t\t\t\t\t User Login: ", u->name, NAME_LENGHT, 0);
 
     tcgetattr(fileno(stdin), &oflags);
     nflags = oflags;
@@ -50,7 +48,7 @@ int registration(sqlite3 *db, struct User *u)
         perror("tcsetattr");
         exit(1);
     }
-    scanLen("\n\t\t\t\t\t Enter the password: ", u->password, PASSWORD_LENGHT);
+    scanLen("\n\t\t\t\t\t Enter the password: ", u->password, PASSWORD_LENGHT, 0);
 
     if (tcsetattr(fileno(stdin), TCSANOW, &oflags) != 0)
     {

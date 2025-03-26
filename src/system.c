@@ -180,7 +180,7 @@ void transferAccount(struct User *u, sqlite3 *db)
     while (1)
     {
         printf("\n\t\tPlease enter the login and account ID of the user to whom you want to transfer the account.");
-        scanLen("\n\t\tLogin: ", a, NAME_LENGHT);
+        scanLen("\n\t\tLogin: ", a, NAME_LENGHT, 0);
 
         if (!isUserExist(a, db))
         {

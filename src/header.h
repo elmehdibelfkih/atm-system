@@ -30,13 +30,15 @@
 [7]- Transfer ownership\n\n\t\t\
 [8]- Exit\n\n"
 
-#define NAME_LENGHT 50
-#define PASSWORD_LENGHT 50
-#define PHONE_LENGHT 20
-#define ACCOUNT_TYPE_LENGHT 10
-#define ACCOUNT_ID_LENGHT 10
-#define DATE_LENGHT 11
-#define COUNTRY_LENGHT 50
+#define NAME_LENGHT 51
+#define PASSWORD_LENGHT 51
+#define PHONE_LENGHT 21
+#define INT_LENGHT 11
+#define ACCOUNT_TYPE_LENGHT 11
+#define ACCOUNT_ID_LENGHT 11
+#define DATE_LENGHT 12
+#define COUNTRY_LENGHT 21
+#define DEPOSIT_LENGHT 21
 
 
 
@@ -48,10 +50,6 @@ typedef struct
 
 extern MyError my_error;
 
-// struct Date
-// {
-//     int month, day, year;
-// };
 
 struct Record
 {
@@ -64,8 +62,6 @@ struct Record
     int accountId;
     double amount;
     char date[DATE_LENGHT];
-    // struct Date deposit;
-    // struct Date withdraw;
 };
 
 struct User
@@ -128,6 +124,6 @@ int clear(char **spl, int p);
 char **split(char const *s, char c);
 char *substr(char const *s, unsigned int start, size_t len);
 void scanInt(int *result, char *prefix, int start, int end);
-void scanLen(char *prefix, char *str, int len);
+void scanLen(char *prefix, char *str, int len, int clear);
 
 #endif

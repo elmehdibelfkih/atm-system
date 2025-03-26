@@ -65,17 +65,9 @@ int scanAccountNumber(struct Record *r, struct User *u, sqlite3 *db)
     system("clear");
     while (1)
     {
-        // printf("\nEnter the account number: ");
-        // if (!fgets(input, sizeof(input), stdin))
-        // {
-        //     system("clear");
 
-        //     printf("%s", ERROR_READING);
-        //     continue;
-        // }
-
-        // input[strcspn(input, "\n")] = 0;
-        scanLen("\nEnter the account number: ", input,  ACCOUNT_ID_LENGHT);
+        system("clear");
+        scanLen("\nEnter the account number: ", input, ACCOUNT_ID_LENGHT, 1);
         char *start = input;
         while (isspace((unsigned char)*start))
             start++;
@@ -132,17 +124,17 @@ int scanAccountNumber(struct Record *r, struct User *u, sqlite3 *db)
 void scanPhoneNumber(struct Record *r)
 {
     char input[PHONE_LENGHT];
-
+    system("clear");
     while (1)
     {
-        system("clear");
-        scanLen("\nEnter the phone number: ", input,  PHONE_LENGHT);
+        scanLen("\nEnter the phone number: ", input, PHONE_LENGHT, 1);
         int length = 0;
         int has_plus = (input[0] == '+');
         for (int i = has_plus; input[i] != '\0'; i++)
         {
             if (!isdigit(input[i]) && input[i] != ' ' && input[i] != '-')
             {
+                system("clear");
                 printf("%s", INVALID_NUMBER_INPUT);
                 goto retry;
             }
@@ -151,35 +143,28 @@ void scanPhoneNumber(struct Record *r)
         }
         if (length < 7 || length > PHONE_LENGHT)
         {
+            system("clear");
             printf("%s", INVALID_PHONE_LENGTH);
             continue;
         }
 
         strncpy(r->phone, input, PHONE_LENGHT);
-        r->phone[14] = '\0';
+        // r->phone[14] = '\0';
         break;
-
-    retry:;
+        retry:
     }
 }
 
 void scanDeposit(struct Record *r)
 {
-    char input[50];
+    char input[DEPOSIT_LENGHT];
     char *endptr;
     double num;
 
     while (1)
     {
         system("clear");
-        printf("\nEnter amount to deposit: $");
-
-        if (!fgets(input, sizeof(input), stdin))
-        {
-            printf("%s", ERROR_READING);
-            continue;
-        }
-        input[strcspn(input, "\n")] = 0;
+        scanLen("\nEnter amount to deposit: $", input, DEPOSIT_LENGHT, 1);
         char *start = input;
         while (isspace((unsigned char)*start))
             start++;
@@ -195,7 +180,6 @@ void scanDeposit(struct Record *r)
         if (*endptr != '\0')
         {
             printf("%s", INVALID_NUMBER_INPUT);
-
             continue;
         }
         if ((num == HUGE_VAL || num == -HUGE_VAL) && errno == ERANGE)
@@ -210,22 +194,14 @@ void scanDeposit(struct Record *r)
 
 void scanDate(struct Record *r)
 {
-    char input[20];
+    char input[DATE_LENGHT];
     int month, day, year;
     int daysInMonth[] = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
     while (1)
     {
+        scanLen("\nEnter today's date(mm/dd/yyyy):", input, DATE_LENGHT, 1);
         system("clear");
-        printf("\nEnter today's date(mm/dd/yyyy):");
-
-        if (!fgets(input, sizeof(input), stdin))
-        {
-            printf("%s", ERROR_READING);
-            continue;
-        }
-        input[strcspn(input, "\n")] = 0;
-
         if (sscanf(input, "%d/%d/%d", &month, &day, &year) != 3)
         {
             printf("%s", INVALID_DATE_FORMAT);
@@ -258,13 +234,13 @@ void scanDate(struct Record *r)
 void scanCountry(struct Record *r)
 {
     system("clear");
-    scanLen("\nEnter the country:", r->country, COUNTRY_LENGHT);
+    scanLen("\nEnter the country:", r->country, COUNTRY_LENGHT, 1);
 
     while (!isCountryValid(r->country))
     {
         system("clear");
         printf("%s", INVALID_COUNTRY);
-        scanLen("\nEnter the country:", r->country, COUNTRY_LENGHT);
+        scanLen("\nEnter the country:", r->country, COUNTRY_LENGHT, 1);
     }
 }
 
@@ -272,12 +248,12 @@ void scanAccountType(struct Record *r)
 {
     char *msg = "\nChoose the type of account:\n\t-> savings\n\t-> current\n\t-> fixed01(for 1 year)\n\t-> fixed02(for 2 years)\n\t-> fixed03(for 3 years)\n\n\tEnter your choice:";
     system("clear");
-    scanLen(msg, r->accountType, ACCOUNT_TYPE_LENGHT);
+    scanLen(msg, r->accountType, ACCOUNT_TYPE_LENGHT, 1);
     while (!isAccountTypeVlid(r->accountType))
     {
         system("clear");
         printf("%s", INVALID_ACCOUNT_TYPE);
-        scanLen(msg, r->accountType, ACCOUNT_TYPE_LENGHT);
+        scanLen(msg, r->accountType, ACCOUNT_TYPE_LENGHT, 1);
     }
 }
 

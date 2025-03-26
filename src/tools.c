@@ -96,8 +96,9 @@ char *substr(char const *s, unsigned int start, size_t len)
 
 void scanInt(int *result, char *prefix, int start, int end)
 {
-	char input[256];
+	char input[INT_LENGHT];
 	char *endptr;
+	char c;
 
 	while (1)
 	{
@@ -106,6 +107,13 @@ void scanInt(int *result, char *prefix, int start, int end)
 		if (!fgets(input, sizeof(input), stdin))
 		{
 			printf("\t\tInsert a valid input!\n");
+			continue;
+		}
+		if (!strchr(input, '\n'))
+		{
+			printf("\t\t❌Error: The maximum allowed input length is %d characters.\n", INT_LENGHT - 2);
+			while ((c = getchar()) != '\n' && c != EOF)
+				;
 			continue;
 		}
 		input[strcspn(input, "\n")] = 0;
@@ -182,7 +190,7 @@ int isCountryValid(const char *name)
 	return 0;
 }
 
-void scanLen(char *prefix, char *str, int len)
+void scanLen(char *prefix, char *str, int len, int clear)
 {
 	char c;
 	while (1)
@@ -196,18 +204,23 @@ void scanLen(char *prefix, char *str, int len)
 		}
 		if (!strchr(str, '\n'))
 		{
-			system("clear");
-			printf("❌Error: The maximum allowed input length is %d characters.\nPlease enter a shorter input and try again.\n", len);
+			if (clear)
+			{
+				system("clear");
+			}
+			printf("\t\t❌Error: The maximum allowed input length is %d characters.", len - 2);
 			while ((c = getchar()) != '\n' && c != EOF)
-			;
+				;
 			continue;
 		}
-		
-		
+
 		str[strcspn(str, "\n")] = 0;
 		if (*str == '\0')
 		{
-			system("clear");
+			if (clear)
+			{
+				system("clear");
+			}
 			printf("%s", INVALID_INPUT);
 			continue;
 		}
