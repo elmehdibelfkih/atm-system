@@ -42,9 +42,11 @@ country, phone, balance, type_of_account) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
 
 #define SQLITE_SELECT_ACCOUNT "SELECT * FROM records WHERE name = ? AND accountId = ?"
 
-#define SQLITE_UPDATE_AMOOUNT "UPDATE records SET amount = ? WHERE accountId = ? AND name = ?"
+#define SQLITE_UPDATE_AMOUNT "UPDATE records SET balance = ? WHERE accountId = ? AND name = ?"
 
+#define SQLITE_SELECT_BALANCE "SELECT balance FROM records WHERE name = ? AND accountId = ?"
 
+#define SQLITE_SELECT_TYPE_OF_ACCOUNT "SELECT type_of_account FROM records WHERE name = ? AND accountId = ?"
 
 
 #endif

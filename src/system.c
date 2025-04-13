@@ -9,13 +9,10 @@ void createNewAcc(struct User *u, sqlite3 *db)
     printf("\t\t\t===== New record =====\n");
 
     scanDate(&r);
-    if (scanAccountNumber(&r, u, db) == -1)
-    {
-        failure(u, db, 1);
-    }
+    scanAccountNumber(&r, u, db);
     scanPhoneNumber(&r);
     scanCountry(&r);
-    scanDeposit(&r);
+    scanAmount(&r, "deposit");
     scanAccountType(&r);
     strcpy(r.name, u->name);
     r.userId = getId(u, db, &err);
@@ -32,7 +29,7 @@ void updateAccount(struct User *u, sqlite3 *db)
     int option;
     int ret;
 
-    getAccountId(u, db, &accountId);
+    checkAccountId(u, db, &accountId);
     system("clear");
     printf("\t\tEnter 1 to update the country or 2 to update the phone number.\n");
     scanInt(&option, "option: ", 1, 2);
@@ -108,7 +105,7 @@ void checkExistingAccounts(struct User *u, sqlite3 *db)
 {
     int accountId;
 
-    getAccountId(u, db, &accountId);
+    checkAccountId(u, db, &accountId);
     sqlite3_stmt *stmt;
     int rc;
     struct Record r;
@@ -155,15 +152,40 @@ void checkExistingAccounts(struct User *u, sqlite3 *db)
 
 void makeTransaction(struct User *u, sqlite3 *db)
 {
-    (void)u;
-    (void)db;
+    int accountId;
+    int option;
+    char accountType[ACCOUNT_TYPE_LENGHT];
+
+    checkAccountId(u, db, &accountId);
+    getTypeOfAccount(u, db, accountId, accountType);
+    if (strcmp(accountType, "fixed01") == 0 || strcmp(accountType, "fixed02") == 0 ||
+        strcmp(accountType, "fixed03") == 0)
+    {
+        printf(TRANSACTION_DENIED);
+        my_error.error_message = TRANSACTION_DENIED;
+        failure(u, db, 1);
+    }
+
+    system("clear");
+    printf("Do you want to:\n\t\t1-> Withdraw\n\t\t2-> Deposit\n");
+    scanInt(&option, "option: ", 1, 2);
+    system("clear");
+    if (option == 1)
+    {
+        withdraw(u, db, accountId);
+    }
+    else
+    {
+        deposit(u, db, accountId);
+    }
+    success(u, db, 1);
 }
 
 void removeExistingAccount(struct User *u, sqlite3 *db)
 {
     int accountId;
 
-    getAccountId(u, db, &accountId);
+    checkAccountId(u, db, &accountId);
     if (deleteAccount(u, db, accountId) == -1)
     {
         failure(u, db, 1);
@@ -189,7 +211,7 @@ void transferAccount(struct User *u, sqlite3 *db)
             continue;
         }
         system("clear");
-        getAccountId(u, db, &accountId);
+        checkAccountId(u, db, &accountId);
         if (transfer(u, accountId, a, db) == -1)
         {
             failure(u, db, 1);

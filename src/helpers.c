@@ -7,7 +7,7 @@ void success(struct User *u, sqlite3 *db, int clear)
     {
         system("clear");
     }
-    printf("\n✔ Success!\n\n");
+    printf("\n\t\t✔ Success!\n\n");
 invalid:
     printf("Enter 1 to go to the main menu and 0 to exit!\n");
     scanInt(&option, "option: ", 0, 1);
@@ -31,7 +31,7 @@ void failure(struct User *u, sqlite3 *db, int printErr)
 {
     int option;
     system("clear");
-    printf("\n❌ failure!\n\n");
+    printf("\n\t\t❌ failure!\n\n");
     if (printErr)
     {
         printf("%s", my_error.error_message);
@@ -55,7 +55,7 @@ invalid:
     }
 }
 
-int scanAccountNumber(struct Record *r, struct User *u, sqlite3 *db)
+void scanAccountNumber(struct Record *r, struct User *u, sqlite3 *db)
 {
     char input[ACCOUNT_ID_LENGHT];
     char *endptr;
@@ -75,50 +75,49 @@ int scanAccountNumber(struct Record *r, struct User *u, sqlite3 *db)
         {
             system("clear");
 
-            printf("%s", INVALID_INPUT);
+            printf(INVALID_INPUT);
             continue;
         }
         num = strtol(start, &endptr, 10);
         if (*endptr != '\0')
         {
             system("clear");
-            printf("%s", INVALID_NUMBER_INPUT);
+            printf(INVALID_NUMBER_INPUT);
             continue;
         }
         if ((num == LONG_MAX || num == LONG_MIN) && errno == ERANGE)
         {
             system("clear");
 
-            printf("%s", OUT_OF_RANGE);
+            printf(OUT_OF_RANGE);
             continue;
         }
         if (num > INT_MAX || num < INT_MIN)
         {
             system("clear");
-            printf("%s", OVER_FLOW);
+            printf(OVER_FLOW);
             continue;
         }
         if (num < 1)
         {
             system("clear");
-            printf("%s", INVALIDE_ACCOUNT_ID_RANGE);
+            printf(INVALIDE_ACCOUNT_ID_RANGE);
             continue;
         }
         r->accountId = (int)num;
         ret = isAccountExist(u, db, r->accountId);
         if (ret == -1)
         {
-            return -1;
+            failure(u, db, 1);
         }
         if (ret)
         {
             system("clear");
-            printf("%s", ACCOUNT_DUP);
+            printf(ACCOUNT_DUP);
             continue;
         }
         break;
     }
-    return 1;
 }
 
 void scanPhoneNumber(struct Record *r)
@@ -135,7 +134,7 @@ void scanPhoneNumber(struct Record *r)
             if (!isdigit(input[i]) && input[i] != ' ' && input[i] != '-')
             {
                 system("clear");
-                printf("%s", INVALID_NUMBER_INPUT);
+                printf(INVALID_NUMBER_INPUT);
                 goto retry;
             }
             if (isdigit(input[i]))
@@ -144,34 +143,36 @@ void scanPhoneNumber(struct Record *r)
         if (length < 7 || length > PHONE_LENGHT)
         {
             system("clear");
-            printf("%s", INVALID_PHONE_LENGTH);
+            printf(INVALID_PHONE_LENGTH);
             continue;
         }
 
         strncpy(r->phone, input, PHONE_LENGHT);
-        // r->phone[14] = '\0';
         break;
-        retry:
+    retry:
     }
 }
 
-void scanDeposit(struct Record *r)
+void scanAmount(struct Record *r, char *typeOfScan)
 {
     char input[DEPOSIT_LENGHT];
     char *endptr;
     double num;
+    char prefix[40];
+
+    sprintf(prefix, "\nEnter amount to %s: $", typeOfScan);
 
     while (1)
     {
         system("clear");
-        scanLen("\nEnter amount to deposit: $", input, DEPOSIT_LENGHT, 1);
+        scanLen(prefix, input, DEPOSIT_LENGHT, 1);
         char *start = input;
         while (isspace((unsigned char)*start))
             start++;
 
         if (*start == '\0')
         {
-            printf("%s", INVALID_INPUT);
+            printf(INVALID_INPUT);
 
             continue;
         }
@@ -179,12 +180,16 @@ void scanDeposit(struct Record *r)
         num = strtod(start, &endptr);
         if (*endptr != '\0')
         {
-            printf("%s", INVALID_NUMBER_INPUT);
+            printf(INVALID_NUMBER_INPUT);
             continue;
         }
-        if ((num == HUGE_VAL || num == -HUGE_VAL) && errno == ERANGE)
+        if (num < 0) {
+            printf(ERROR_NEGATIVE_AMOUNT);
+            continue;
+        }
+        if (num == HUGE_VAL && errno == ERANGE)
         {
-            printf("%s", OUT_OF_RANGE);
+            printf(OUT_OF_RANGE);
             continue;
         }
         r->amount = num;
@@ -204,17 +209,17 @@ void scanDate(struct Record *r)
         system("clear");
         if (sscanf(input, "%d/%d/%d", &month, &day, &year) != 3)
         {
-            printf("%s", INVALID_DATE_FORMAT);
+            printf(INVALID_DATE_FORMAT);
             continue;
         }
         if (year < 1900 || year > 2200)
         {
-            printf("%s", INVALID_YEAR);
+            printf(INVALID_YEAR);
             continue;
         }
         if (month < 1 || month > 12)
         {
-            printf("%s", INVALID_MONTH);
+            printf(INVALID_MONTH);
             continue;
         }
         if (month == 2 && isLeapYear(year))
@@ -223,7 +228,7 @@ void scanDate(struct Record *r)
         }
         if (day < 1 || day > daysInMonth[month])
         {
-            printf("%s", INVALID_DAY);
+            printf(INVALID_DAY);
             continue;
         }
         snprintf(r->date, sizeof(r->date), "%02d/%02d/%04d", month, day, year);
@@ -239,7 +244,7 @@ void scanCountry(struct Record *r)
     while (!isCountryValid(r->country))
     {
         system("clear");
-        printf("%s", INVALID_COUNTRY);
+        printf(INVALID_COUNTRY);
         scanLen("\nEnter the country:", r->country, COUNTRY_LENGHT, 1);
     }
 }
@@ -252,7 +257,7 @@ void scanAccountType(struct Record *r)
     while (!isAccountTypeVlid(r->accountType))
     {
         system("clear");
-        printf("%s", INVALID_ACCOUNT_TYPE);
+        printf(INVALID_ACCOUNT_TYPE);
         scanLen(msg, r->accountType, ACCOUNT_TYPE_LENGHT, 1);
     }
 }
@@ -285,14 +290,14 @@ void printAccountInfo(struct Record r)
            r.accountType);
 }
 
-void getAccountId(struct User *u, sqlite3 *db, int *accountId)
+void checkAccountId(struct User *u, sqlite3 *db, int *accountId)
 {
     int tmp;
 
     system("clear");
     while (1)
     {
-        printf("\n\n\t\tPlease enter the Account ID you wish to modify or update.\n"
+        printf("\n\n\t\tPlease enter the Account ID.\n"
                "\t\tEnsure the ID is correct and exists in the system.\n");
         printf("\t\tTo view all available accounts, return to the main menu by entering -1.\n");
         scanInt(accountId, "Account ID: ", -1, INT_MAX);
@@ -350,4 +355,39 @@ void printInterest(char accountType[ACCOUNT_TYPE_LENGHT], double amount, char da
 
     printf("You will get $%.2f as interest on day %s of every month\n", tmp, dateTmp[0]);
     clear(dateTmp, 3);
+}
+
+void withdraw(struct User *u, sqlite3 *db, int accountId)
+{
+    double balance;
+    struct Record r;
+
+    scanAmount(&r, "withdraw");
+    balance = getBalance(u, db, accountId);
+    if (r.amount > balance) {
+        my_error.error_message = INSUFFICIENT_BALANCE;
+        failure(u, db, 1);
+    }
+    if (transaction(u, accountId, balance - r.amount, db) == -1 ) {
+        failure(u, db, 1);
+    }
+}
+
+void deposit(struct User *u, sqlite3 *db, int accountId)
+{
+    struct Record r;
+    double balance;
+
+    scanAmount(&r, "deposit");
+    balance = getBalance(u, db, accountId);
+    if ((DBL_MAX - balance) < r.amount) {
+        my_error.error_message = OVERFLOW_DETECTED;
+        exit(1);
+        failure(u, db, 1);
+    }
+    
+    if (transaction(u, accountId, balance + r.amount, db) == -1 ) {
+        exit(1);
+        failure(u, db, 1);
+    }
 }

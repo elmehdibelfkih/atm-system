@@ -8,7 +8,6 @@ int main()
     sqlite3 *db;
     intiDataBase(&db);
     initMenu(&u, db);
-    mainMenu(&u, db);
     sqlite3_close(db);
     return 0;
 }

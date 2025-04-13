@@ -13,6 +13,7 @@
 #include <math.h>
 #include "errors.h"
 #include "SQLiteQueries.h"
+#include <float.h> 
 
 #define INIT_MENU "\n\n\t\t======= ATM =======\n\n\t\t\
 -->> Feel free to login / register :\n\n\t\t\
@@ -98,22 +99,27 @@ int updateCountry(struct User *u, sqlite3 *db, int accountId);
 int updatePhone(struct User *u, sqlite3 *db, int accountId);
 int isUserExist(char a[NAME_LENGHT], sqlite3 *db);
 int transfer(struct User *u, int accountId, char newOwner[NAME_LENGHT], sqlite3 *db);
+int transaction(struct User *u, int accountId, double newAmount, sqlite3 *db);
+double getBalance(struct User *u, sqlite3 *db, int accountId);
+int getTypeOfAccount(struct User *u, sqlite3 *db, int accountId, char type[ACCOUNT_TYPE_LENGHT]);
 
 // helpers
 int isAccountExist(struct User *u, sqlite3 *db, int accountId);
 void success(struct User *u, sqlite3 *db, int clear);
 void failure(struct User *u, sqlite3 *db, int printErr);
-int scanAccountNumber(struct Record *r, struct User *u, sqlite3 *db);
+void scanAccountNumber(struct Record *r, struct User *u, sqlite3 *db);
 void scanPhoneNumber(struct Record *r);
-void scanDeposit(struct Record *r);
+void scanAmount(struct Record *r, char *typeOfScan);
 void scanDate(struct Record *r);
 void scanCountry(struct Record *r);
 void scanAccountType(struct Record *r);
 int isAccountTypeVlid(const char *type);
 void printAccountInfo(struct Record r);
 int deleteAccount(struct User *u, sqlite3 *db, int accountId);
-void getAccountId(struct User *u, sqlite3 *db, int *accountId);
+void checkAccountId(struct User *u, sqlite3 *db, int *accountId);
 void printInterest(char accountType[ACCOUNT_TYPE_LENGHT], double amount, char date[DATE_LENGHT]);
+void withdraw(struct User *u, sqlite3 *db, int accountId);
+void deposit(struct User *u, sqlite3 *db, int accountId);
 
 // tools
 int isCountryValid(const char *name);

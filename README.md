@@ -27,11 +27,9 @@ This project implements an ATM management system in C where users can perform va
 ### 5. Transfer Ownership
 - Users can transfer ownership of their accounts to another user, updating the database accordingly.
 
-### 6. Bonus Features (Optional)
-- **User Notifications**: When an account ownership is transferred, the recipient user gets an instant notification (using pipes and child processes).
+### 6. Bonus Features
 - **Encryption of Passwords**: Implement encryption for storing and verifying user passwords.
 - **Relational Database**: All user and account data is stored in an SQLite database instead of text files.
-- **Improved User Interface**: Enhancements to the terminal interface for better user experience.
 
 ## Project Structure
 
@@ -43,18 +41,18 @@ This project implements an ATM management system in C where users can perform va
 │   └── sakila.db
 ├── Makefile
 ├── README.md
-├── src
-│   ├── authAndReg.c
-│   ├── dataBaseTools.c
-│   ├── errors.h
-│   ├── header.h
-│   ├── helpers.c
-│   ├── main.c
-│   ├── menus.c
-│   ├── SQLiteQueries.h
-│   ├── system.c
-│   └── tools.c
-└── todo
+└── src
+    ├── authAndReg.c
+    ├── dataBaseTools.c
+    ├── errors.h
+    ├── header.h
+    ├── helpers.c
+    ├── main.c
+    ├── menus.c
+    ├── SQLiteQueries.h
+    ├── system.c
+    └── tools.c
+
 ```
 
 ## Database Schema
@@ -82,7 +80,7 @@ The project uses an SQLite database with the following schema:
 1. Clone this repository to your local machine.
 
     ```bash
-    git clone https://github.com/yourusername/atm-management-system.git
+    git clone https://github.com/elmehdibelfkih/atm-system.git
     cd atm-management-system
     ```
 

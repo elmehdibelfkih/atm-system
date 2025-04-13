@@ -338,3 +338,84 @@ int transfer(struct User *u, int accountId, char newOwner[NAME_LENGHT], sqlite3 
     sqlite3_finalize(stmt);
     return 1;
 }
+
+int transaction(struct User *u, int accountId, double newAmount, sqlite3 *db)
+{
+    sqlite3_stmt *stmt;
+
+    if (sqlite3_prepare_v2(db, SQLITE_UPDATE_AMOUNT, -1, &stmt, NULL) != SQLITE_OK)
+    {
+        my_error.error_message = DATABASE_ERROR;
+        return -1;
+    }
+    sqlite3_bind_double(stmt, 1, newAmount);
+    sqlite3_bind_int(stmt, 2, accountId);
+    sqlite3_bind_text(stmt, 3, u->name, -1, SQLITE_STATIC);
+
+    if (sqlite3_step(stmt) != SQLITE_DONE)
+    {
+        my_error.error_message = DATABASE_ERROR;
+        sqlite3_finalize(stmt);
+        return -1;
+    }
+    sqlite3_finalize(stmt);
+    return 1;
+}
+
+double getBalance(struct User *u, sqlite3 *db, int accountId)
+{
+    double balance = -1.0;
+    sqlite3_stmt *stmt = NULL;
+
+    if (sqlite3_prepare_v2(db, SQLITE_SELECT_BALANCE, -1, &stmt, NULL) != SQLITE_OK)
+    {
+        my_error.error_message = DATABASE_ERROR;
+        failure(u, db, 1);
+    }
+
+    sqlite3_bind_text(stmt, 1, u->name, -1, SQLITE_STATIC);
+    sqlite3_bind_int(stmt, 2, accountId);
+
+    if (sqlite3_step(stmt) == SQLITE_ROW)
+    {
+        balance = sqlite3_column_double(stmt, 0);
+    }
+    else
+    {
+        my_error.error_message = DATABASE_ERROR;
+        sqlite3_finalize(stmt);
+        failure(u, db, 1);
+    }
+
+    sqlite3_finalize(stmt);
+    return balance;
+}
+
+int getTypeOfAccount(struct User *u, sqlite3 *db, int accountId, char type[ACCOUNT_TYPE_LENGHT]) // FIXME:
+{
+    sqlite3_stmt *stmt = NULL;
+
+    if (sqlite3_prepare_v2(db, SQLITE_SELECT_TYPE_OF_ACCOUNT, -1, &stmt, NULL) != SQLITE_OK)
+    {
+        my_error.error_message = DATABASE_ERROR;
+        return -1;
+    }
+
+    sqlite3_bind_text(stmt, 1, u->name, -1, SQLITE_STATIC);
+    sqlite3_bind_int(stmt, 2, accountId);
+
+    if (sqlite3_step(stmt) == SQLITE_ROW)
+    {
+        strncpy(type, (const char *)sqlite3_column_text(stmt, 0), ACCOUNT_TYPE_LENGHT - 1);
+        type[ACCOUNT_TYPE_LENGHT - 1] = '\0';
+    }
+    else
+    {
+        my_error.error_message = DATABASE_ERROR;
+        sqlite3_finalize(stmt);
+        return -1;
+    }
+
+    sqlite3_finalize(stmt);
+    return 1;
+}

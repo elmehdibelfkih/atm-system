@@ -39,7 +39,7 @@
 
  ___________________________________
 |                                   |
-| init Menu:                        |
+| users                             |
 |  ______________________________   |
 |  | id | name   | password     |   |
 |  |----|--------|--------------|   |
@@ -51,7 +51,7 @@
 
  _______________________________________________________________________________________________________________________
 |                                                                                                                       |
-|  records.txt                                                                                                          |
+|  records                                                                                                              |
 |  ___________________________________________________________________________________________________________________  |
 |  | id | user_id | user name | account id | date of creation | country  | phone nº  | balance     | type of account |  |
 |  |----|---------|-----------|------------|------------------|----------|-----------|-------------|-----------------|  |
@@ -62,14 +62,3 @@
 |_______________________________________________________________________________________________________________________|
 
 
-TODO: checkAccData(struct User u) check the data if is valide
-    - id if is duplcate
-    - userId is is dup
-    - name len and dup and characters
-    - country format and characters
-    - phone format
-    - accountType if exist
-    - amount format
-    - date format (deposit and withdraw)
-
-TODO: handeling long text input

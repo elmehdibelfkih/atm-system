@@ -24,7 +24,6 @@ void mainMenu(struct User *u, sqlite3 *db)
         checkAllAccounts(u, db);
         break;
     case 5:
-        // TODO: add your **Make transaction** function
         makeTransaction(u, db);
         break;
     case 6:
