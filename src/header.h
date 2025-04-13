@@ -54,14 +54,14 @@ extern MyError my_error;
 
 struct Record
 {
-    char name[NAME_LENGHT];
-    char country[COUNTRY_LENGHT];
-    char accountType[ACCOUNT_TYPE_LENGHT];
     int id;
-    char phone[PHONE_LENGHT];
     int userId;
     int accountId;
     double amount;
+    char name[NAME_LENGHT];
+    char country[COUNTRY_LENGHT];
+    char phone[PHONE_LENGHT];
+    char accountType[ACCOUNT_TYPE_LENGHT];
     char date[DATE_LENGHT];
 };
 

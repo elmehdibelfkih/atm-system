@@ -1,5 +1,6 @@
 #include "header.h"
 
+// function display a success message to the user after an opperration
 void success(struct User *u, sqlite3 *db, int clear)
 {
     int option;
@@ -26,7 +27,7 @@ invalid:
         goto invalid;
     }
 }
-
+// function display an error message if exist to the user after an opperration
 void failure(struct User *u, sqlite3 *db, int printErr)
 {
     int option;
@@ -55,6 +56,7 @@ invalid:
     }
 }
 
+// function that scans and checks the account number
 void scanAccountNumber(struct Record *r, struct User *u, sqlite3 *db)
 {
     char input[ACCOUNT_ID_LENGHT];
@@ -120,6 +122,7 @@ void scanAccountNumber(struct Record *r, struct User *u, sqlite3 *db)
     }
 }
 
+// function that scans and checks the phone number
 void scanPhoneNumber(struct Record *r)
 {
     char input[PHONE_LENGHT];
@@ -153,6 +156,7 @@ void scanPhoneNumber(struct Record *r)
     }
 }
 
+// function that scans and checks the amount
 void scanAmount(struct Record *r, char *typeOfScan)
 {
     char input[DEPOSIT_LENGHT];
@@ -197,6 +201,7 @@ void scanAmount(struct Record *r, char *typeOfScan)
     }
 }
 
+// function that scans and checks the date
 void scanDate(struct Record *r)
 {
     char input[DATE_LENGHT];
@@ -236,6 +241,7 @@ void scanDate(struct Record *r)
     }
 }
 
+// function that scans and checks the country
 void scanCountry(struct Record *r)
 {
     system("clear");
@@ -249,6 +255,7 @@ void scanCountry(struct Record *r)
     }
 }
 
+// function that scans and checks the account type
 void scanAccountType(struct Record *r)
 {
     char *msg = "\nChoose the type of account:\n\t-> savings\n\t-> current\n\t-> fixed01(for 1 year)\n\t-> fixed02(for 2 years)\n\t-> fixed03(for 3 years)\n\n\tEnter your choice:";
@@ -262,6 +269,7 @@ void scanAccountType(struct Record *r)
     }
 }
 
+// function that checks the supported account types
 int isAccountTypeVlid(const char *type)
 {
     const size_t typesCount = 5;
@@ -279,6 +287,7 @@ int isAccountTypeVlid(const char *type)
     return 0;
 }
 
+// function that prints the account info to the user
 void printAccountInfo(struct Record r)
 {
     printf("\nAccount ID: %d\nDeposit Date: %s \ncountry: %s \nPhone number: %s \nAmount deposited: $ %.2f \nType Of Account: %s\n\n",
@@ -290,6 +299,7 @@ void printAccountInfo(struct Record r)
            r.accountType);
 }
 
+// function that scans and checks the account id
 void checkAccountId(struct User *u, sqlite3 *db, int *accountId)
 {
     int tmp;
@@ -357,6 +367,7 @@ void printInterest(char accountType[ACCOUNT_TYPE_LENGHT], double amount, char da
     clear(dateTmp, 3);
 }
 
+// function that checks the possibility of withdrawing and making it if possible
 void withdraw(struct User *u, sqlite3 *db, int accountId)
 {
     double balance;
@@ -373,6 +384,7 @@ void withdraw(struct User *u, sqlite3 *db, int accountId)
     }
 }
 
+// function that checks the possibility of depositing and making it if possible
 void deposit(struct User *u, sqlite3 *db, int accountId)
 {
     struct Record r;

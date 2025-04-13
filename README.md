@@ -66,14 +66,14 @@ The project uses an SQLite database with the following schema:
 
 2. **accounts**: Stores account details for each user.
    - `id` INTEGER PRIMARY KEY
-   - `user_id` INTEGER (foreign key referencing `users(id)`)
-   - `account_name` TEXT
+   - `userId` INTEGER (foreign key referencing `users(id)`)
    - `account_id` INTEGER
-   - `date_created` TEXT
+   - `balance` REAL
+   - `name` TEXT
    - `country` TEXT
    - `phone_number` TEXT
-   - `balance` REAL
    - `account_type` TEXT (current, savings, fixed01, fixed02, fixed03)
+   - `date_created` TEXT
 
 ## Installation
 

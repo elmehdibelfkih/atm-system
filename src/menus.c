@@ -1,5 +1,6 @@
 #include "header.h"
 
+// the main menu of the programme
 void mainMenu(struct User *u, sqlite3 *db)
 {
     int option;
@@ -40,6 +41,7 @@ void mainMenu(struct User *u, sqlite3 *db)
     }
 };
 
+// the user menu that contains all functions of the user
 void initMenu(struct User *u, sqlite3 *db)
 {
     int r = 0;

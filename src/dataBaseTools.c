@@ -1,5 +1,6 @@
 #include "header.h"
 
+//Open or create the database if it does not exist
 void intiDataBase(sqlite3 **db)
 {
     char *errMsg = NULL;
@@ -31,6 +32,7 @@ void intiDataBase(sqlite3 **db)
     return;
 }
 
+// add new users to the database
 int addUser(char *name, char *passWord, sqlite3 *db)
 {
     sqlite3_stmt *stmt;
@@ -64,6 +66,7 @@ int addUser(char *name, char *passWord, sqlite3 *db)
     return 1;
 }
 
+// add new account to existing user in the database
 int addRecord(struct Record r, sqlite3 *db)
 {
     sqlite3_stmt *stmt;
@@ -130,7 +133,8 @@ int getPassword(struct User *u, sqlite3 *db, char password[PASSWORD_LENGHT])
         return -1;
     }
 }
-
+// return the id of the user 
+// if the user does not exist or an error happen return -1 and set the errno
 int getId(struct User *u, sqlite3 *db, int *err)
 {
     int id = -1;
@@ -220,6 +224,7 @@ int updateCountry(struct User *u, sqlite3 *db, int accountId)
     return 1;
 }
 
+// function to update the phone number
 int updatePhone(struct User *u, sqlite3 *db, int accountId)
 {
     struct Record r;
@@ -247,7 +252,7 @@ int updatePhone(struct User *u, sqlite3 *db, int accountId)
     sqlite3_finalize(stmt);
     return 1;
 }
-
+// function to delete existing accounts
 int deleteAccount(struct User *u, sqlite3 *db, int accountId)
 {
     sqlite3_stmt *stmt;
@@ -304,6 +309,7 @@ int isUserExist(char a[NAME_LENGHT], sqlite3 *db)
     return -1;
 }
 
+// function to trasfer account to an existing user
 int transfer(struct User *u, int accountId, char newOwner[NAME_LENGHT], sqlite3 *db)
 {
     struct User newOwnerstruct;
@@ -339,6 +345,7 @@ int transfer(struct User *u, int accountId, char newOwner[NAME_LENGHT], sqlite3 
     return 1;
 }
 
+// function to make transactions and update the data in the database
 int transaction(struct User *u, int accountId, double newAmount, sqlite3 *db)
 {
     sqlite3_stmt *stmt;
@@ -362,6 +369,7 @@ int transaction(struct User *u, int accountId, double newAmount, sqlite3 *db)
     return 1;
 }
 
+// function that return the account balace of an existing user
 double getBalance(struct User *u, sqlite3 *db, int accountId)
 {
     double balance = -1.0;
@@ -390,7 +398,7 @@ double getBalance(struct User *u, sqlite3 *db, int accountId)
     sqlite3_finalize(stmt);
     return balance;
 }
-
+// function that return the type of the account
 int getTypeOfAccount(struct User *u, sqlite3 *db, int accountId, char type[ACCOUNT_TYPE_LENGHT]) // FIXME:
 {
     sqlite3_stmt *stmt = NULL;
