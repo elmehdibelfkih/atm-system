@@ -1,6 +1,7 @@
 #include <termios.h>
 #include "header.h"
 
+
 void loginMenu(char a[NAME_LENGHT], char pass[PASSWORD_LENGHT])
 {
     struct termios oflags, nflags;

@@ -1,6 +1,6 @@
 #include "header.h"
 
-//Open or create the database if it does not exist
+// Open or create the database if it does not exist
 void intiDataBase(sqlite3 **db)
 {
     char *errMsg = NULL;
@@ -133,7 +133,8 @@ int getPassword(struct User *u, sqlite3 *db, char password[PASSWORD_LENGHT])
         return -1;
     }
 }
-// return the id of the user 
+
+// return the id of the user
 // if the user does not exist or an error happen return -1 and set the errno
 int getId(struct User *u, sqlite3 *db, int *err)
 {
@@ -252,6 +253,7 @@ int updatePhone(struct User *u, sqlite3 *db, int accountId)
     sqlite3_finalize(stmt);
     return 1;
 }
+
 // function to delete existing accounts
 int deleteAccount(struct User *u, sqlite3 *db, int accountId)
 {
@@ -398,8 +400,9 @@ double getBalance(struct User *u, sqlite3 *db, int accountId)
     sqlite3_finalize(stmt);
     return balance;
 }
+
 // function that return the type of the account
-int getTypeOfAccount(struct User *u, sqlite3 *db, int accountId, char type[ACCOUNT_TYPE_LENGHT]) // FIXME:
+int getTypeOfAccount(struct User *u, sqlite3 *db, int accountId, char type[ACCOUNT_TYPE_LENGHT])
 {
     sqlite3_stmt *stmt = NULL;
 

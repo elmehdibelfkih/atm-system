@@ -4,7 +4,6 @@
 #define DATABASE_ERROR "Error: There was a problem connecting to the database. Please try again later.\n"
 #define LOGIN_FATAL "\n\n\t\tWrong password!! or User Name\n"
 #define REGISTRATION_ERROR "\n\n\t\tThe username you entered is already in use. Please choose a different one.\n"
-
 #define ERROR_READING "\t\t❌ Error reading input. Please try again."
 #define INVALID_INPUT "\t\t❌ Invalid input! Please enter a valid input."
 #define INVALID_NUMBER_INPUT "\t\t❌ Invalid input! Only numbers are allowed."

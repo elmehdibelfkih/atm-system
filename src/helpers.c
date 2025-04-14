@@ -27,6 +27,7 @@ invalid:
         goto invalid;
     }
 }
+
 // function display an error message if exist to the user after an opperration
 void failure(struct User *u, sqlite3 *db, int printErr)
 {
@@ -187,7 +188,8 @@ void scanAmount(struct Record *r, char *typeOfScan)
             printf(INVALID_NUMBER_INPUT);
             continue;
         }
-        if (num < 0) {
+        if (num < 0)
+        {
             printf(ERROR_NEGATIVE_AMOUNT);
             continue;
         }
@@ -340,31 +342,42 @@ void printInterest(char accountType[ACCOUNT_TYPE_LENGHT], double amount, char da
     char **dateTmp;
 
     dateTmp = split(date, '/');
+    int year = atoi(dateTmp[2]);
+
     if (strcmp(accountType, "current") == 0)
     {
-        printf("You will not get interests because the account is of type current\n");
+        printf("You will not get interests because the account is of type current.\n");
         clear(dateTmp, 3);
         return;
     }
     else if (strcmp(accountType, "savings") == 0)
     {
         tmp = amount * 7 / 100 / 12;
+        printf("You will get $%.2f as interest on day %s of every month.\n", tmp, dateTmp[0]);
+        clear(dateTmp, 3);
+        return;
     }
     else if (strcmp(accountType, "fixed01") == 0)
     {
-        tmp = amount * 4 / 100 / 12;
+        tmp = amount * 4 / 100;
+        printf("You will get $%.2f as interest on %s/%s/%d.\n", tmp, dateTmp[0], dateTmp[1], year + 1);
+        clear(dateTmp, 3);
+        return;
     }
     else if (strcmp(accountType, "fixed02") == 0)
     {
-        tmp = amount * 5 / 100 / 12;
+        tmp = amount * 5 / 100 * 2;
+        printf("You will get $%.2f as interest on %s/%s/%d.\n", tmp, dateTmp[0], dateTmp[1], year + 2);
+        clear(dateTmp, 3);
+        return;
     }
     else if (strcmp(accountType, "fixed03") == 0)
     {
-        tmp = amount * 8 / 100 / 12;
+        tmp = amount * 8 / 100 * 3;
+        printf("You will get $%.2f as interest on %s/%s/%d.\n", tmp, dateTmp[0], dateTmp[1], year + 3);
+        clear(dateTmp, 3);
+        return;
     }
-
-    printf("You will get $%.2f as interest on day %s of every month\n", tmp, dateTmp[0]);
-    clear(dateTmp, 3);
 }
 
 // function that checks the possibility of withdrawing and making it if possible
@@ -375,11 +388,13 @@ void withdraw(struct User *u, sqlite3 *db, int accountId)
 
     scanAmount(&r, "withdraw");
     balance = getBalance(u, db, accountId);
-    if (r.amount > balance) {
+    if (r.amount > balance)
+    {
         my_error.error_message = INSUFFICIENT_BALANCE;
         failure(u, db, 1);
     }
-    if (transaction(u, accountId, balance - r.amount, db) == -1 ) {
+    if (transaction(u, accountId, balance - r.amount, db) == -1)
+    {
         failure(u, db, 1);
     }
 }
@@ -392,13 +407,15 @@ void deposit(struct User *u, sqlite3 *db, int accountId)
 
     scanAmount(&r, "deposit");
     balance = getBalance(u, db, accountId);
-    if ((DBL_MAX - balance) < r.amount) {
+    if ((DBL_MAX - balance) < r.amount)
+    {
         my_error.error_message = OVERFLOW_DETECTED;
         exit(1);
         failure(u, db, 1);
     }
-    
-    if (transaction(u, accountId, balance + r.amount, db) == -1 ) {
+
+    if (transaction(u, accountId, balance + r.amount, db) == -1)
+    {
         exit(1);
         failure(u, db, 1);
     }
